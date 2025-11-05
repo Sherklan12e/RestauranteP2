@@ -35,18 +35,29 @@ public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
     return Ok(usuarios);
 }
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Usuario>> GetUsuario(uint id)
-    {
-        var usuario = await _context.Usuarios.FindAsync(id);
-
-        if (usuario == null || !usuario.Activo)
+[HttpGet("{id}")]
+public async Task<ActionResult<UsuarioDTO>> GetUsuario(uint id)
+{
+    var usuario = await _context.Usuarios
+        .Where(u => u.IdUsuario == id && u.Activo)
+        .Select(u => new UsuarioDTO
         {
-            return NotFound();
-        }
+            IdUsuario = u.IdUsuario,
+            Nombre = u.Nombre,
+            Apellido = u.Apellido,
+            Email = u.Email,
+            Telefono = u.Telefono,
+            FechaRegistro = u.FechaRegistro
+        })
+        .FirstOrDefaultAsync();
 
-        return usuario;
+    if (usuario == null)
+    {
+        return NotFound();
     }
+
+    return Ok(usuario);
+}
 
     [HttpPost]
 public async Task<ActionResult<UsuarioDTO>> PostUsuario(UsuarioCreateDTO dto)
@@ -79,51 +90,63 @@ public async Task<ActionResult<UsuarioDTO>> PostUsuario(UsuarioCreateDTO dto)
 }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutUsuario(uint id, Usuario usuario)
+public async Task<IActionResult> PutUsuario(uint id, UsuarioUpdateDTO dto)
+{
+    var usuario = await _context.Usuarios.FindAsync(id);
+
+    if (usuario == null || !usuario.Activo)
     {
-        if (id != usuario.IdUsuario)
-        {
-            return BadRequest();
-        }
-
-        _context.Entry(usuario).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!UsuarioExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
+        return NotFound();
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteUsuario(uint id)
+    // Mapear solo los campos editables
+    usuario.Nombre = dto.Nombre;
+    usuario.Apellido = dto.Apellido;
+    usuario.Email = dto.Email;
+    usuario.Telefono = dto.Telefono;
+
+    // Actualizar contraseña si viene en el DTO (opcional)
+    if (!string.IsNullOrWhiteSpace(dto.Contrasena))
     {
-        var usuario = await _context.Usuarios.FindAsync(id);
-        if (usuario == null)
+        usuario.Contrasena = dto.Contrasena;
+    }
+
+    try
+    {
+        await _context.SaveChangesAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        if (!UsuarioExists(id))
         {
             return NotFound();
         }
-
-        usuario.Activo = false;
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        else
+        {
+            throw;
+        }
     }
+
+    return NoContent();
+}
 
     private bool UsuarioExists(uint id)
     {
-        return _context.Usuarios.Any(e => e.IdUsuario == id && e.Activo);
+        throw new NotImplementedException();
     }
+
+    [HttpDelete("{id}")]
+public async Task<IActionResult> DeleteUsuario(uint id)
+{
+    var usuario = await _context.Usuarios.FindAsync(id);
+    if (usuario == null)
+    {
+        return NotFound();
+    }
+
+    usuario.Activo = false;
+    await _context.SaveChangesAsync();
+
+    return NoContent();
+}
 }
