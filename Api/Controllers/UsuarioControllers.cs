@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Api.Models;
 namespace Api;
 
+
 [ApiController]
 [Route("api/[controller]")]
 public class UsuariosController : ControllerBase
@@ -15,10 +16,24 @@ public class UsuariosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
-    {
-        return await _context.Usuarios.Where(u => u.Activo).ToListAsync();
-    }
+    [HttpGet]
+public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
+{
+    var usuarios = await _context.Usuarios
+        .Where(u => u.Activo)
+        .Select(u => new UsuarioDTO
+        {
+            IdUsuario = u.IdUsuario,
+            Nombre = u.Nombre,
+            Apellido = u.Apellido,
+            Email = u.Email,
+            Telefono = u.Telefono,
+            FechaRegistro = u.FechaRegistro
+        })
+        .ToListAsync();
+
+    return Ok(usuarios);
+}
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Usuario>> GetUsuario(uint id)
@@ -34,16 +49,34 @@ public class UsuariosController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
+public async Task<ActionResult<UsuarioDTO>> PostUsuario(UsuarioCreateDTO dto)
+{
+    var usuario = new Usuario
     {
-        usuario.FechaRegistro = DateTime.Now;
-        usuario.Activo = true;
-        
-        _context.Usuarios.Add(usuario);
-        await _context.SaveChangesAsync();
+        Nombre = dto.Nombre,
+        Apellido = dto.Apellido,
+        Email = dto.Email,
+        Telefono = dto.Telefono,
+        Contrasena = dto.Contrasena,
+        FechaRegistro = DateTime.Now,
+        Activo = true
+    };
 
-        return CreatedAtAction(nameof(GetUsuario), new { id = usuario.IdUsuario }, usuario);
-    }
+    _context.Usuarios.Add(usuario);
+    await _context.SaveChangesAsync();
+
+    var usuarioDto = new UsuarioDTO
+    {
+        IdUsuario = usuario.IdUsuario,
+        Nombre = usuario.Nombre,
+        Apellido = usuario.Apellido,
+        Email = usuario.Email,
+        Telefono = usuario.Telefono,
+        FechaRegistro = usuario.FechaRegistro
+    };
+
+    return CreatedAtAction(nameof(GetUsuario), new { id = usuario.IdUsuario }, usuarioDto);
+}
 
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUsuario(uint id, Usuario usuario)
@@ -88,7 +121,7 @@ public class UsuariosController : ControllerBase
 
         return NoContent();
     }
-    
+
     private bool UsuarioExists(uint id)
     {
         return _context.Usuarios.Any(e => e.IdUsuario == id && e.Activo);

@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// ✅ Si usás .NET 8 o 9, NO uses AddOpenApi + MapOpenApi juntos con AddSwaggerGen.
+//  Si usás .NET 8 o 9, NO uses AddOpenApi + MapOpenApi juntos con AddSwaggerGen.
 // Mejor usar solo SwaggerGen (más completo y compatible con Swagger UI).
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -20,14 +20,14 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// ✅ Configuración de la base de datos MySQL
+//  Configuración de la base de datos MySQL
 builder.Services.AddDbContext<RestauranteDisponibilidadContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         new MySqlServerVersion(new Version(8, 0, 41))
     ));
 
-// ✅ Configurar CORS (para conexión con frontend)
+//  Configurar CORS (para conexión con frontend)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -40,7 +40,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ✅ Configurar el pipeline HTTP
+//  Configurar el pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
     // Mostrar Swagger solo en desarrollo
