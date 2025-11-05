@@ -48,18 +48,37 @@ public class ReservasController : ControllerBase
             .Include(r => r.IdMesaNavigation)
             .ToListAsync();
     }
-
-    [HttpPost]
-    public async Task<ActionResult<Reserva>> PostReserva(Reserva reserva)
+[HttpPost]
+public async Task<ActionResult<ReservaDTO>> PostReserva(ReservaCreateDTO dto)
+{
+    var reserva = new Reserva
     {
-        reserva.FechaCreacion = DateTime.Now;
-        reserva.Estado = "Pendiente";
-        
-        _context.Reservas.Add(reserva);
-        await _context.SaveChangesAsync();
+        IdUsuario = dto.IdUsuario,
+        IdMesa = dto.IdMesa,
+        FechaHora = dto.FechaHora,
+        CantidadPersonas = dto.CantidadPersonas,
+        Comentarios = dto.Comentarios,
+        Estado = "Pendiente",
+        FechaCreacion = DateTime.Now
+    };
 
-        return CreatedAtAction("GetReserva", new { id = reserva.IdReserva }, reserva);
-    }
+    _context.Reservas.Add(reserva);
+    await _context.SaveChangesAsync();
+
+    var reservaDTO = new ReservaDTO
+    {
+        IdReserva = reserva.IdReserva,
+        IdUsuario = reserva.IdUsuario,
+        IdMesa = reserva.IdMesa,
+        FechaHora = reserva.FechaHora,
+        CantidadPersonas = reserva.CantidadPersonas,
+        Estado = reserva.Estado,
+        Comentarios = reserva.Comentarios,
+        FechaCreacion = reserva.FechaCreacion
+    };
+
+    return CreatedAtAction(nameof(GetReserva), new { id = reserva.IdReserva }, reservaDTO);
+}
 
     [HttpPut("{id}/estado")]
     public async Task<IActionResult> UpdateEstadoReserva(uint id, [FromBody] string estado)

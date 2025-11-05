@@ -70,6 +70,31 @@ public partial class RestauranteDisponibilidadContext : DbContext
                 .HasForeignKey(d => d.IdCategoria)
                 .HasConstraintName("fk_Plato_Categoria");
         });
+// Configuración de la tabla Reserva
+modelBuilder.Entity<Reserva>(entity =>
+{
+    entity.HasKey(e => e.IdReserva).HasName("PRIMARY");
+    entity.ToTable("reserva"); // 👈 fuerza el nombre correcto
+
+    entity.Property(e => e.IdReserva).HasColumnName("idReserva");
+    entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
+    entity.Property(e => e.IdMesa).HasColumnName("idMesa");
+    entity.Property(e => e.FechaHora).HasColumnType("datetime");
+    entity.Property(e => e.CantidadPersonas).HasColumnType("tinyint");
+    entity.Property(e => e.Estado).HasMaxLength(50);
+    entity.Property(e => e.Comentarios).HasMaxLength(255);
+    entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+    entity.HasOne(d => d.IdUsuarioNavigation)
+        .WithMany(p => p.Reservas)
+        .HasForeignKey(d => d.IdUsuario)
+        .HasConstraintName("fk_Reserva_Usuario");
+
+    entity.HasOne(d => d.IdMesaNavigation)
+        .WithMany(p => p.Reservas)
+        .HasForeignKey(d => d.IdMesa)
+        .HasConstraintName("fk_Reserva_Mesa");
+});
 
         // Configuraciones adicionales para otras tablas...
         // (Puedes mantener tu configuración actual aquí)
