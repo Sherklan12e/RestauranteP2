@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Api.Models;
 
@@ -8,6 +9,7 @@ namespace Api.Models;
 /// </summary>
 public partial class Historialdisponibilidad
 {
+    [Key]
     public uint IdHistorial { get; set; }
 
     public uint IdPlato { get; set; }

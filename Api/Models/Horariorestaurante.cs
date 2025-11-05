@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Api.Models;
 
@@ -8,6 +9,7 @@ namespace Api.Models;
 /// </summary>
 public partial class Horariorestaurante
 {
+    [Key]
     public uint IdHorario { get; set; }
 
     /// <summary>

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 namespace Api.Models;
 
 /// <summary>
@@ -8,6 +8,7 @@ namespace Api.Models;
 /// </summary>
 public partial class Usuario
 {
+    [Key]
     public uint IdUsuario { get; set; }
 
     public string Nombre { get; set; } = null!;

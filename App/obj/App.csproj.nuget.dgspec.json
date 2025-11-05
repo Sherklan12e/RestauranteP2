@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Lab15-PC01\\Documents\\GitHub\\RestauranteP2\\App\\App.csproj": {}
+    "E:\\RestauranteP2\\App\\App.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Lab15-PC01\\Documents\\GitHub\\RestauranteP2\\App\\App.csproj": {
+    "E:\\RestauranteP2\\App\\App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lab15-PC01\\Documents\\GitHub\\RestauranteP2\\App\\App.csproj",
+        "projectUniqueName": "E:\\RestauranteP2\\App\\App.csproj",
         "projectName": "App",
-        "projectPath": "C:\\Users\\Lab15-PC01\\Documents\\GitHub\\RestauranteP2\\App\\App.csproj",
+        "projectPath": "E:\\RestauranteP2\\App\\App.csproj",
         "packagesPath": "C:\\Users\\Lab15-PC01\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lab15-PC01\\Documents\\GitHub\\RestauranteP2\\App\\obj\\",
+        "outputPath": "E:\\RestauranteP2\\App\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 namespace Api.Models;
 
 /// <summary>
@@ -8,6 +8,7 @@ namespace Api.Models;
 /// </summary>
 public partial class Plato
 {
+    [Key]
     public uint IdPlato { get; set; }
 
     public uint IdCategoria { get; set; }
