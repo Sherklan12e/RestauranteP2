@@ -15,115 +15,135 @@ public class PlatosController : ControllerBase
         _context = context;
     }
 
+    // GET: api/platos
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Plato>>> GetPlatos()
+    public async Task<ActionResult<IEnumerable<PlatoDTO>>> GetPlatos()
     {
-        return await _context.Platos
+        var platos = await _context.Platos
+            .Include(p => p.IdCategoriaNavigation)
             .Where(p => p.Activo)
-            .Include(p => p.IdCategoriaNavigation)
+            .Select(p => new PlatoDTO
+            {
+                IdPlato = p.IdPlato,
+                IdCategoria = p.IdCategoria,
+                Nombre = p.Nombre,
+                Descripcion = p.Descripcion,
+                Precio = p.Precio,
+                TiempoPreparacion = p.TiempoPreparacion,
+                ImagenUrl = p.ImagenUrl,
+                Disponible = p.Disponible,
+                EsMenuDelDia = p.EsMenuDelDia,
+                Activo = p.Activo,
+                CategoriaNombre = p.IdCategoriaNavigation.Nombre
+            })
             .ToListAsync();
+
+        return Ok(platos);
     }
 
-    [HttpGet("disponibles")]
-    public async Task<ActionResult<IEnumerable<Plato>>> GetPlatosDisponibles()
-    {
-        return await _context.Platos
-            .Where(p => p.Disponible && p.Activo)
-            .Include(p => p.IdCategoriaNavigation)
-            .ToListAsync();
-    }
-
+    // GET: api/platos/{id}
     [HttpGet("{id}")]
-    public async Task<ActionResult<Plato>> GetPlato(uint id)
+    public async Task<ActionResult<PlatoDTO>> GetPlato(uint id)
     {
         var plato = await _context.Platos
             .Include(p => p.IdCategoriaNavigation)
-            .FirstOrDefaultAsync(p => p.IdPlato == id && p.Activo);
+            .Where(p => p.IdPlato == id && p.Activo)
+            .Select(p => new PlatoDTO
+            {
+                IdPlato = p.IdPlato,
+                IdCategoria = p.IdCategoria,
+                Nombre = p.Nombre,
+                Descripcion = p.Descripcion,
+                Precio = p.Precio,
+                TiempoPreparacion = p.TiempoPreparacion,
+                ImagenUrl = p.ImagenUrl,
+                Disponible = p.Disponible,
+                EsMenuDelDia = p.EsMenuDelDia,
+                Activo = p.Activo,
+                CategoriaNombre = p.IdCategoriaNavigation.Nombre
+            })
+            .FirstOrDefaultAsync();
 
         if (plato == null)
-        {
             return NotFound();
-        }
 
-        return plato;
+        return Ok(plato);
     }
 
-    [HttpGet("categoria/{categoriaId}")]
-    public async Task<ActionResult<IEnumerable<Plato>>> GetPlatosPorCategoria(uint categoriaId)
-    {
-        return await _context.Platos
-            .Where(p => p.IdCategoria == categoriaId && p.Activo)
-            .Include(p => p.IdCategoriaNavigation)
-            .ToListAsync();
-    }
-
-    [HttpGet("menu-del-dia")]
-    public async Task<ActionResult<IEnumerable<Plato>>> GetMenuDelDia()
-    {
-        return await _context.Platos
-            .Where(p => p.EsMenuDelDia && p.Disponible && p.Activo)
-            .Include(p => p.IdCategoriaNavigation)
-            .ToListAsync();
-    }
-
+    // POST: api/platos
     [HttpPost]
-    public async Task<ActionResult<Plato>> PostPlato(Plato plato)
+    public async Task<ActionResult<PlatoDTO>> PostPlato(PlatoCreateDTO dto)
     {
-        plato.Activo = true;
-        plato.Disponible = true;
-        
+        var plato = new Plato
+        {
+            IdCategoria = dto.IdCategoria,
+            Nombre = dto.Nombre,
+            Descripcion = dto.Descripcion,
+            Precio = dto.Precio,
+            TiempoPreparacion = dto.TiempoPreparacion,
+            ImagenUrl = dto.ImagenUrl,
+            Disponible = dto.Disponible,
+            EsMenuDelDia = dto.EsMenuDelDia,
+            Activo = true
+        };
+
         _context.Platos.Add(plato);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetPlato", new { id = plato.IdPlato }, plato);
+        var categoria = await _context.Categoriaplatos.FindAsync(dto.IdCategoria);
+
+        var platoDTO = new PlatoDTO
+        {
+            IdPlato = plato.IdPlato,
+            IdCategoria = plato.IdCategoria,
+            Nombre = plato.Nombre,
+            Descripcion = plato.Descripcion,
+            Precio = plato.Precio,
+            TiempoPreparacion = plato.TiempoPreparacion,
+            ImagenUrl = plato.ImagenUrl,
+            Disponible = plato.Disponible,
+            EsMenuDelDia = plato.EsMenuDelDia,
+            Activo = plato.Activo,
+            CategoriaNombre = categoria?.Nombre
+        };
+
+        return CreatedAtAction(nameof(GetPlato), new { id = plato.IdPlato }, platoDTO);
     }
 
+    // PUT: api/platos/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutPlato(uint id, Plato plato)
+    public async Task<IActionResult> PutPlato(uint id, PlatoUpdateDTO dto)
     {
-        if (id != plato.IdPlato)
-        {
-            return BadRequest();
-        }
+        var plato = await _context.Platos.FindAsync(id);
 
-        _context.Entry(plato).State = EntityState.Modified;
+        if (plato == null || !plato.Activo)
+            return NotFound();
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!PlatoExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
+        plato.Nombre = dto.Nombre;
+        plato.Descripcion = dto.Descripcion;
+        plato.Precio = dto.Precio;
+        plato.TiempoPreparacion = dto.TiempoPreparacion;
+        plato.ImagenUrl = dto.ImagenUrl;
+        plato.Disponible = dto.Disponible;
+        plato.EsMenuDelDia = dto.EsMenuDelDia;
+
+        await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
+    // DELETE lógico: api/platos/{id}
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePlato(uint id)
     {
         var plato = await _context.Platos.FindAsync(id);
+
         if (plato == null)
-        {
             return NotFound();
-        }
 
         plato.Activo = false;
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private bool PlatoExists(uint id)
-    {
-        return _context.Platos.Any(e => e.IdPlato == id && e.Activo);
     }
 }

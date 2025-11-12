@@ -1,16 +1,13 @@
 ﻿namespace Api;
 
-public class PlatoDTO
+public class PlatoCreateDTO
 {
-        public uint IdPlato { get; set; }
         public uint IdCategoria { get; set; }
         public string Nombre { get; set; } = null!;
         public string? Descripcion { get; set; }
         public decimal Precio { get; set; }
         public uint TiempoPreparacion { get; set; }
         public string? ImagenUrl { get; set; }
-        public bool Disponible { get; set; }
-        public bool EsMenuDelDia { get; set; }
-        public bool Activo { get; set; }
-        public string? CategoriaNombre { get; set; }
+        public bool Disponible { get; set; } = true;
+        public bool EsMenuDelDia { get; set; } = false;
 }

@@ -71,7 +71,7 @@ public partial class RestauranteDisponibilidadContext : DbContext
                 .HasConstraintName("fk_Plato_Categoria");
         });
 // Configuración de la tabla Reserva
-modelBuilder.Entity<Reserva>(entity =>
+    modelBuilder.Entity<Reserva>(entity =>
 {
     entity.HasKey(e => e.IdReserva).HasName("PRIMARY");
     entity.ToTable("reserva"); // 👈 fuerza el nombre correcto
@@ -94,6 +94,18 @@ modelBuilder.Entity<Reserva>(entity =>
         .WithMany(p => p.Reservas)
         .HasForeignKey(d => d.IdMesa)
         .HasConstraintName("fk_Reserva_Mesa");
+});
+
+// Configuración de la tabla Mesa
+    modelBuilder.Entity<Mesa>(entity =>
+{
+    entity.HasKey(e => e.IdMesa).HasName("PRIMARY");
+    entity.ToTable("mesa"); // 👈 fuerza a usar el nombre correcto en MySQL
+
+    entity.Property(e => e.IdMesa).HasColumnName("idMesa");
+    entity.Property(e => e.NumeroMesa).HasMaxLength(20);
+    entity.Property(e => e.Capacidad).HasColumnType("tinyint");
+    entity.Property(e => e.Activa).HasDefaultValue(true);
 });
 
         // Configuraciones adicionales para otras tablas...

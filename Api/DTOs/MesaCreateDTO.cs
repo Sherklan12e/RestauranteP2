@@ -1,9 +1,8 @@
 ﻿namespace Api;
 
-public class MesaDTO
+public class MesaCreateDTO
 {
-    public uint IdMesa { get; set; }
     public string NumeroMesa { get; set; } = null!;
     public byte Capacidad { get; set; }
-    public bool? Activa { get; set; }
+    public bool? Activa { get; set; } = true;
 }

@@ -1,9 +1,7 @@
 ﻿namespace Api;
 
-public class PlatoDTO
+public class PlatoUpdateDTO
 {
-        public uint IdPlato { get; set; }
-        public uint IdCategoria { get; set; }
         public string Nombre { get; set; } = null!;
         public string? Descripcion { get; set; }
         public decimal Precio { get; set; }
@@ -11,6 +9,4 @@ public class PlatoDTO
         public string? ImagenUrl { get; set; }
         public bool Disponible { get; set; }
         public bool EsMenuDelDia { get; set; }
-        public bool Activo { get; set; }
-        public string? CategoriaNombre { get; set; }
 }
