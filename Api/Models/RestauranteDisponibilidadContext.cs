@@ -96,17 +96,27 @@ public partial class RestauranteDisponibilidadContext : DbContext
         .HasConstraintName("fk_Reserva_Mesa");
 });
 
-// Configuración de la tabla Mesa
-    modelBuilder.Entity<Mesa>(entity =>
-{
-    entity.HasKey(e => e.IdMesa).HasName("PRIMARY");
-    entity.ToTable("mesa"); // 👈 fuerza a usar el nombre correcto en MySQL
+        // Configuración de la tabla Mesa
+        modelBuilder.Entity<Mesa>(entity =>
+    {
+        entity.HasKey(e => e.IdMesa).HasName("PRIMARY");
+        entity.ToTable("mesa"); // 👈 fuerza a usar el nombre correcto en MySQL
 
-    entity.Property(e => e.IdMesa).HasColumnName("idMesa");
-    entity.Property(e => e.NumeroMesa).HasMaxLength(20);
-    entity.Property(e => e.Capacidad).HasColumnType("tinyint");
-    entity.Property(e => e.Activa).HasDefaultValue(true);
-});
+        entity.Property(e => e.IdMesa).HasColumnName("idMesa");
+        entity.Property(e => e.NumeroMesa).HasMaxLength(20);
+        entity.Property(e => e.Capacidad).HasColumnType("tinyint");
+        entity.Property(e => e.Activa).HasDefaultValue(true);
+    });
+// Configuración de la tabla Categoriaplato
+modelBuilder.Entity<Categoriaplato>(entity =>
+    {
+    entity.HasKey(e => e.IdCategoria).HasName("PRIMARY");
+    entity.ToTable("categoriaplato"); // 👈 fuerza el nombre correcto en MySQL
+
+    entity.Property(e => e.IdCategoria).HasColumnName("idCategoria");
+    entity.Property(e => e.Nombre).HasMaxLength(100);
+    entity.Property(e => e.Descripcion).HasMaxLength(255);
+    });
 
         // Configuraciones adicionales para otras tablas...
         // (Puedes mantener tu configuración actual aquí)
