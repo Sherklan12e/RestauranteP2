@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(RestauranteDisponibilidadContext))]
-    [Migration("20251105204243_Inicial")]
-    partial class Inicial
+    [Migration("20251127182223_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,20 +77,24 @@ namespace Api.Migrations
                 {
                     b.Property<uint>("IdCategoria")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idCategoria");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<uint>("IdCategoria"));
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
-                    b.HasKey("IdCategoria");
+                    b.HasKey("IdCategoria")
+                        .HasName("PRIMARY");
 
-                    b.ToTable("Categoriaplatos");
+                    b.ToTable("categoriaplato", (string)null);
                 });
 
             modelBuilder.Entity("Api.Models.Configuracionrestaurante", b =>
@@ -121,61 +125,64 @@ namespace Api.Migrations
                 {
                     b.Property<uint>("IdDetallePedido")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idDetallePedido");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<uint>("IdDetallePedido"));
 
-                    b.Property<byte>("Cantidad")
-                        .HasColumnType("tinyint unsigned");
+                    b.Property<sbyte>("Cantidad")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Comentarios")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<uint>("IdPedido")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint>("IdPedidoNavigationIdPedido")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idPedido");
 
                     b.Property<uint>("IdPlato")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint>("IdPlatoNavigationIdPlato")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idPlato");
 
                     b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("IdDetallePedido");
+                    b.HasKey("IdDetallePedido")
+                        .HasName("PRIMARY");
 
-                    b.HasIndex("IdPedidoNavigationIdPedido");
+                    b.HasIndex("IdPedido");
 
-                    b.HasIndex("IdPlatoNavigationIdPlato");
+                    b.HasIndex("IdPlato");
 
-                    b.ToTable("Detallepedidos");
+                    b.ToTable("detallepedido", (string)null);
                 });
 
             modelBuilder.Entity("Api.Models.Estadopedido", b =>
                 {
                     b.Property<uint>("IdEstadoPedido")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idEstadoPedido");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<uint>("IdEstadoPedido"));
 
                     b.Property<string>("Descripcion")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
-                    b.HasKey("IdEstadoPedido");
+                    b.HasKey("IdEstadoPedido")
+                        .HasName("PRIMARY");
 
-                    b.ToTable("Estadopedidos");
+                    b.ToTable("estadopedido", (string)null);
                 });
 
             modelBuilder.Entity("Api.Models.Historialdisponibilidad", b =>
@@ -267,23 +274,28 @@ namespace Api.Migrations
                 {
                     b.Property<uint>("IdMesa")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idMesa");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<uint>("IdMesa"));
 
                     b.Property<bool?>("Activa")
-                        .HasColumnType("tinyint(1)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
 
-                    b.Property<byte>("Capacidad")
-                        .HasColumnType("tinyint unsigned");
+                    b.Property<sbyte>("Capacidad")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("NumeroMesa")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
-                    b.HasKey("IdMesa");
+                    b.HasKey("IdMesa")
+                        .HasName("PRIMARY");
 
-                    b.ToTable("Mesas");
+                    b.ToTable("mesa", (string)null);
                 });
 
             modelBuilder.Entity("Api.Models.Metodopago", b =>
@@ -303,70 +315,65 @@ namespace Api.Migrations
 
                     b.HasKey("IdMetodoPago");
 
-                    b.ToTable("Metodopagos");
+                    b.ToTable("Metodopago");
                 });
 
             modelBuilder.Entity("Api.Models.Pedido", b =>
                 {
                     b.Property<uint>("IdPedido")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idPedido");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<uint>("IdPedido"));
 
                     b.Property<string>("Comentarios")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<bool>("EsPreOrden")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("FechaHoraEntregaEstimada")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime?>("FechaHoraEntregaReal")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("FechaHoraPedido")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime");
 
                     b.Property<uint>("IdEstadoPedido")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint>("IdEstadoPedidoNavigationIdEstadoPedido")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idEstadoPedido");
 
                     b.Property<uint?>("IdMetodoPago")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint?>("IdMetodoPagoNavigationIdMetodoPago")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idMetodoPago");
 
                     b.Property<uint?>("IdReserva")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint?>("IdReservaNavigationIdReserva")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idReserva");
 
                     b.Property<uint>("IdUsuario")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint>("IdUsuarioNavigationIdUsuario")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idUsuario");
 
                     b.Property<decimal>("Total")
-                        .HasColumnType("decimal(65,30)");
+                        .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("IdPedido");
+                    b.HasKey("IdPedido")
+                        .HasName("PRIMARY");
 
-                    b.HasIndex("IdEstadoPedidoNavigationIdEstadoPedido");
+                    b.HasIndex("IdEstadoPedido");
 
-                    b.HasIndex("IdMetodoPagoNavigationIdMetodoPago");
+                    b.HasIndex("IdMetodoPago");
 
-                    b.HasIndex("IdReservaNavigationIdReserva");
+                    b.HasIndex("IdReserva");
 
-                    b.HasIndex("IdUsuarioNavigationIdUsuario");
+                    b.HasIndex("IdUsuario");
 
-                    b.ToTable("Pedidos");
+                    b.ToTable("pedido", (string)null);
                 });
 
             modelBuilder.Entity("Api.Models.Plato", b =>
@@ -456,45 +463,45 @@ namespace Api.Migrations
                 {
                     b.Property<uint>("IdReserva")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idReserva");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<uint>("IdReserva"));
 
-                    b.Property<byte>("CantidadPersonas")
-                        .HasColumnType("tinyint unsigned");
+                    b.Property<sbyte>("CantidadPersonas")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("Comentarios")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Estado")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime");
 
                     b.Property<DateTime>("FechaHora")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime");
 
                     b.Property<uint?>("IdMesa")
-                        .HasColumnType("int unsigned");
-
-                    b.Property<uint?>("IdMesaNavigationIdMesa")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idMesa");
 
                     b.Property<uint>("IdUsuario")
-                        .HasColumnType("int unsigned");
+                        .HasColumnType("int unsigned")
+                        .HasColumnName("idUsuario");
 
-                    b.Property<uint>("IdUsuarioNavigationIdUsuario")
-                        .HasColumnType("int unsigned");
+                    b.HasKey("IdReserva")
+                        .HasName("PRIMARY");
 
-                    b.HasKey("IdReserva");
+                    b.HasIndex("IdMesa");
 
-                    b.HasIndex("IdMesaNavigationIdMesa");
+                    b.HasIndex("IdUsuario");
 
-                    b.HasIndex("IdUsuarioNavigationIdUsuario");
-
-                    b.ToTable("Reservas");
+                    b.ToTable("reserva", (string)null);
                 });
 
             modelBuilder.Entity("Api.Models.Usuario", b =>
@@ -573,15 +580,17 @@ namespace Api.Migrations
                 {
                     b.HasOne("Api.Models.Pedido", "IdPedidoNavigation")
                         .WithMany("Detallepedidos")
-                        .HasForeignKey("IdPedidoNavigationIdPedido")
+                        .HasForeignKey("IdPedido")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_DetallePedido_Pedido");
 
                     b.HasOne("Api.Models.Plato", "IdPlatoNavigation")
                         .WithMany("Detallepedidos")
-                        .HasForeignKey("IdPlatoNavigationIdPlato")
+                        .HasForeignKey("IdPlato")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_DetallePedido_Plato");
 
                     b.Navigation("IdPedidoNavigation");
 
@@ -603,23 +612,27 @@ namespace Api.Migrations
                 {
                     b.HasOne("Api.Models.Estadopedido", "IdEstadoPedidoNavigation")
                         .WithMany("Pedidos")
-                        .HasForeignKey("IdEstadoPedidoNavigationIdEstadoPedido")
+                        .HasForeignKey("IdEstadoPedido")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_Pedido_EstadoPedido");
 
                     b.HasOne("Api.Models.Metodopago", "IdMetodoPagoNavigation")
                         .WithMany("Pedidos")
-                        .HasForeignKey("IdMetodoPagoNavigationIdMetodoPago");
+                        .HasForeignKey("IdMetodoPago")
+                        .HasConstraintName("fk_Pedido_MetodoPago");
 
                     b.HasOne("Api.Models.Reserva", "IdReservaNavigation")
                         .WithMany("Pedidos")
-                        .HasForeignKey("IdReservaNavigationIdReserva");
+                        .HasForeignKey("IdReserva")
+                        .HasConstraintName("fk_Pedido_Reserva");
 
                     b.HasOne("Api.Models.Usuario", "IdUsuarioNavigation")
                         .WithMany("Pedidos")
-                        .HasForeignKey("IdUsuarioNavigationIdUsuario")
+                        .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_Pedido_Usuario");
 
                     b.Navigation("IdEstadoPedidoNavigation");
 
@@ -665,13 +678,15 @@ namespace Api.Migrations
                 {
                     b.HasOne("Api.Models.Mesa", "IdMesaNavigation")
                         .WithMany("Reservas")
-                        .HasForeignKey("IdMesaNavigationIdMesa");
+                        .HasForeignKey("IdMesa")
+                        .HasConstraintName("fk_Reserva_Mesa");
 
                     b.HasOne("Api.Models.Usuario", "IdUsuarioNavigation")
                         .WithMany("Reservas")
-                        .HasForeignKey("IdUsuarioNavigationIdUsuario")
+                        .HasForeignKey("IdUsuario")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_Reserva_Usuario");
 
                     b.Navigation("IdMesaNavigation");
 

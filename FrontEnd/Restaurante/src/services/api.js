@@ -165,4 +165,64 @@ export const metodosPagoService = {
   },
 };
 
+// Servicios de Admin
+export const adminService = {
+  // Pedidos
+  getTodosPedidos: async (usuarioId) => {
+    const response = await api.get('/admin/pedidos', { params: { usuarioId } });
+    return response.data;
+  },
+  actualizarEstadoPedido: async (pedidoId, usuarioId, nuevoEstado) => {
+    await api.put(`/admin/pedidos/${pedidoId}/estado`, { nuevoEstado }, { params: { usuarioId } });
+  },
+
+  // Reservas
+  getTodasReservas: async (usuarioId) => {
+    const response = await api.get('/admin/reservas', { params: { usuarioId } });
+    return response.data;
+  },
+  actualizarEstadoReserva: async (reservaId, usuarioId, nuevoEstado) => {
+    await api.put(`/admin/reservas/${reservaId}/estado`, { nuevoEstado }, { params: { usuarioId } });
+  },
+
+  // Usuarios
+  getTodosUsuarios: async (usuarioId) => {
+    const response = await api.get('/admin/usuarios', { params: { usuarioId } });
+    return response.data;
+  },
+  cambiarRolUsuario: async (usuarioTargetId, usuarioId, nuevoRol) => {
+    await api.put(`/admin/usuarios/${usuarioTargetId}/rol`, { nuevoRol }, { params: { usuarioId } });
+  },
+  cambiarEstadoUsuario: async (usuarioTargetId, usuarioId, activo) => {
+    await api.put(`/admin/usuarios/${usuarioTargetId}/estado`, { activo }, { params: { usuarioId } });
+  },
+
+  // Estadísticas
+  getEstadisticas: async (usuarioId) => {
+    const response = await api.get('/admin/estadisticas', { params: { usuarioId } });
+    return response.data;
+  },
+
+  // Mesas
+  getTodasMesas: async (usuarioId) => {
+    const response = await api.get('/admin/mesas', { params: { usuarioId } });
+    return response.data;
+  },
+  cambiarEstadoMesa: async (mesaId, usuarioId, activa) => {
+    await api.put(`/admin/mesas/${mesaId}/estado`, { activo: activa }, { params: { usuarioId } });
+  },
+
+  // Platos
+  getTodosPlatos: async (usuarioId) => {
+    const response = await api.get('/admin/platos', { params: { usuarioId } });
+    return response.data;
+  },
+  cambiarDisponibilidadPlato: async (platoId, usuarioId, disponible) => {
+    await api.put(`/admin/platos/${platoId}/disponibilidad`, { activo: disponible }, { params: { usuarioId } });
+  },
+  eliminarPlato: async (platoId, usuarioId) => {
+    await api.delete(`/admin/platos/${platoId}`, { params: { usuarioId } });
+  },
+};
+
 export default api;

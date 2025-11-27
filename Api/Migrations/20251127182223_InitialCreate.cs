@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Inicial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,19 +16,19 @@ namespace Api.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Categoriaplatos",
+                name: "categoriaplato",
                 columns: table => new
                 {
-                    IdCategoria = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idCategoria = table.Column<uint>(type: "int unsigned", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nombre = table.Column<string>(type: "longtext", nullable: false, collation: "utf8mb4_0900_ai_ci")
+                    Nombre = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Descripcion = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_0900_ai_ci")
+                    Descripcion = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categoriaplatos", x => x.IdCategoria);
+                    table.PrimaryKey("PRIMARY", x => x.idCategoria);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
@@ -54,19 +54,19 @@ namespace Api.Migrations
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
-                name: "Estadopedidos",
+                name: "estadopedido",
                 columns: table => new
                 {
-                    IdEstadoPedido = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idEstadoPedido = table.Column<uint>(type: "int unsigned", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nombre = table.Column<string>(type: "longtext", nullable: false, collation: "utf8mb4_0900_ai_ci")
+                    Nombre = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Descripcion = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_0900_ai_ci")
+                    Descripcion = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Estadopedidos", x => x.IdEstadoPedido);
+                    table.PrimaryKey("PRIMARY", x => x.idEstadoPedido);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
@@ -111,25 +111,25 @@ namespace Api.Migrations
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
-                name: "Mesas",
+                name: "mesa",
                 columns: table => new
                 {
-                    IdMesa = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idMesa = table.Column<uint>(type: "int unsigned", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    NumeroMesa = table.Column<string>(type: "longtext", nullable: false, collation: "utf8mb4_0900_ai_ci")
+                    NumeroMesa = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Capacidad = table.Column<byte>(type: "tinyint unsigned", nullable: false),
-                    Activa = table.Column<bool>(type: "tinyint(1)", nullable: true)
+                    Capacidad = table.Column<sbyte>(type: "tinyint", nullable: false),
+                    Activa = table.Column<bool>(type: "tinyint(1)", nullable: true, defaultValue: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Mesas", x => x.IdMesa);
+                    table.PrimaryKey("PRIMARY", x => x.idMesa);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
-                name: "Metodopagos",
+                name: "Metodopago",
                 columns: table => new
                 {
                     IdMetodoPago = table.Column<uint>(type: "int unsigned", nullable: false)
@@ -140,7 +140,7 @@ namespace Api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Metodopagos", x => x.IdMetodoPago);
+                    table.PrimaryKey("PK_Metodopago", x => x.IdMetodoPago);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
@@ -196,42 +196,40 @@ namespace Api.Migrations
                     table.ForeignKey(
                         name: "fk_Plato_Categoria",
                         column: x => x.idCategoria,
-                        principalTable: "Categoriaplatos",
-                        principalColumn: "IdCategoria",
+                        principalTable: "categoriaplato",
+                        principalColumn: "idCategoria",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4")
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
-                name: "Reservas",
+                name: "reserva",
                 columns: table => new
                 {
-                    IdReserva = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idReserva = table.Column<uint>(type: "int unsigned", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdUsuario = table.Column<uint>(type: "int unsigned", nullable: false),
-                    IdMesa = table.Column<uint>(type: "int unsigned", nullable: true),
-                    FechaHora = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CantidadPersonas = table.Column<byte>(type: "tinyint unsigned", nullable: false),
-                    Estado = table.Column<string>(type: "longtext", nullable: false, collation: "utf8mb4_0900_ai_ci")
+                    idUsuario = table.Column<uint>(type: "int unsigned", nullable: false),
+                    idMesa = table.Column<uint>(type: "int unsigned", nullable: true),
+                    FechaHora = table.Column<DateTime>(type: "datetime", nullable: false),
+                    CantidadPersonas = table.Column<sbyte>(type: "tinyint", nullable: false),
+                    Estado = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Comentarios = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_0900_ai_ci")
+                    Comentarios = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FechaCreacion = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    IdMesaNavigationIdMesa = table.Column<uint>(type: "int unsigned", nullable: true),
-                    IdUsuarioNavigationIdUsuario = table.Column<uint>(type: "int unsigned", nullable: false)
+                    FechaCreacion = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reservas", x => x.IdReserva);
+                    table.PrimaryKey("PRIMARY", x => x.idReserva);
                     table.ForeignKey(
-                        name: "FK_Reservas_Mesas_IdMesaNavigationIdMesa",
-                        column: x => x.IdMesaNavigationIdMesa,
-                        principalTable: "Mesas",
-                        principalColumn: "IdMesa");
+                        name: "fk_Reserva_Mesa",
+                        column: x => x.idMesa,
+                        principalTable: "mesa",
+                        principalColumn: "idMesa");
                     table.ForeignKey(
-                        name: "FK_Reservas_usuario_IdUsuarioNavigationIdUsuario",
-                        column: x => x.IdUsuarioNavigationIdUsuario,
+                        name: "fk_Reserva_Usuario",
+                        column: x => x.idUsuario,
                         principalTable: "usuario",
                         principalColumn: "idUsuario",
                         onDelete: ReferentialAction.Cascade);
@@ -296,49 +294,45 @@ namespace Api.Migrations
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
-                name: "Pedidos",
+                name: "pedido",
                 columns: table => new
                 {
-                    IdPedido = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idPedido = table.Column<uint>(type: "int unsigned", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdUsuario = table.Column<uint>(type: "int unsigned", nullable: false),
-                    IdReserva = table.Column<uint>(type: "int unsigned", nullable: true),
-                    IdEstadoPedido = table.Column<uint>(type: "int unsigned", nullable: false),
-                    IdMetodoPago = table.Column<uint>(type: "int unsigned", nullable: true),
-                    FechaHoraPedido = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    FechaHoraEntregaEstimada = table.Column<DateTime>(type: "datetime(6)", nullable: true),
-                    FechaHoraEntregaReal = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    idUsuario = table.Column<uint>(type: "int unsigned", nullable: false),
+                    idReserva = table.Column<uint>(type: "int unsigned", nullable: true),
+                    idEstadoPedido = table.Column<uint>(type: "int unsigned", nullable: false),
+                    idMetodoPago = table.Column<uint>(type: "int unsigned", nullable: true),
+                    FechaHoraPedido = table.Column<DateTime>(type: "datetime", nullable: false),
+                    FechaHoraEntregaEstimada = table.Column<DateTime>(type: "datetime", nullable: true),
+                    FechaHoraEntregaReal = table.Column<DateTime>(type: "datetime", nullable: true),
                     EsPreOrden = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Total = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Comentarios = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_0900_ai_ci")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IdEstadoPedidoNavigationIdEstadoPedido = table.Column<uint>(type: "int unsigned", nullable: false),
-                    IdMetodoPagoNavigationIdMetodoPago = table.Column<uint>(type: "int unsigned", nullable: true),
-                    IdReservaNavigationIdReserva = table.Column<uint>(type: "int unsigned", nullable: true),
-                    IdUsuarioNavigationIdUsuario = table.Column<uint>(type: "int unsigned", nullable: false)
+                    Total = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Comentarios = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Pedidos", x => x.IdPedido);
+                    table.PrimaryKey("PRIMARY", x => x.idPedido);
                     table.ForeignKey(
-                        name: "FK_Pedidos_Estadopedidos_IdEstadoPedidoNavigationIdEstadoPedido",
-                        column: x => x.IdEstadoPedidoNavigationIdEstadoPedido,
-                        principalTable: "Estadopedidos",
-                        principalColumn: "IdEstadoPedido",
+                        name: "fk_Pedido_EstadoPedido",
+                        column: x => x.idEstadoPedido,
+                        principalTable: "estadopedido",
+                        principalColumn: "idEstadoPedido",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Pedidos_Metodopagos_IdMetodoPagoNavigationIdMetodoPago",
-                        column: x => x.IdMetodoPagoNavigationIdMetodoPago,
-                        principalTable: "Metodopagos",
+                        name: "fk_Pedido_MetodoPago",
+                        column: x => x.idMetodoPago,
+                        principalTable: "Metodopago",
                         principalColumn: "IdMetodoPago");
                     table.ForeignKey(
-                        name: "FK_Pedidos_Reservas_IdReservaNavigationIdReserva",
-                        column: x => x.IdReservaNavigationIdReserva,
-                        principalTable: "Reservas",
-                        principalColumn: "IdReserva");
+                        name: "fk_Pedido_Reserva",
+                        column: x => x.idReserva,
+                        principalTable: "reserva",
+                        principalColumn: "idReserva");
                     table.ForeignKey(
-                        name: "FK_Pedidos_usuario_IdUsuarioNavigationIdUsuario",
-                        column: x => x.IdUsuarioNavigationIdUsuario,
+                        name: "fk_Pedido_Usuario",
+                        column: x => x.idUsuario,
                         principalTable: "usuario",
                         principalColumn: "idUsuario",
                         onDelete: ReferentialAction.Cascade);
@@ -367,10 +361,10 @@ namespace Api.Migrations
                 {
                     table.PrimaryKey("PK_Calificacions", x => x.IdCalificacion);
                     table.ForeignKey(
-                        name: "FK_Calificacions_Pedidos_IdPedidoNavigationIdPedido",
+                        name: "FK_Calificacions_pedido_IdPedidoNavigationIdPedido",
                         column: x => x.IdPedidoNavigationIdPedido,
-                        principalTable: "Pedidos",
-                        principalColumn: "IdPedido");
+                        principalTable: "pedido",
+                        principalColumn: "idPedido");
                     table.ForeignKey(
                         name: "FK_Calificacions_plato_IdPlatoNavigationIdPlato",
                         column: x => x.IdPlatoNavigationIdPlato,
@@ -388,33 +382,31 @@ namespace Api.Migrations
                 .Annotation("Relational:Collation", "utf8mb4_0900_ai_ci");
 
             migrationBuilder.CreateTable(
-                name: "Detallepedidos",
+                name: "detallepedido",
                 columns: table => new
                 {
-                    IdDetallePedido = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idDetallePedido = table.Column<uint>(type: "int unsigned", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdPedido = table.Column<uint>(type: "int unsigned", nullable: false),
-                    IdPlato = table.Column<uint>(type: "int unsigned", nullable: false),
-                    Cantidad = table.Column<byte>(type: "tinyint unsigned", nullable: false),
-                    PrecioUnitario = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Subtotal = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Comentarios = table.Column<string>(type: "longtext", nullable: true, collation: "utf8mb4_0900_ai_ci")
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IdPedidoNavigationIdPedido = table.Column<uint>(type: "int unsigned", nullable: false),
-                    IdPlatoNavigationIdPlato = table.Column<uint>(type: "int unsigned", nullable: false)
+                    idPedido = table.Column<uint>(type: "int unsigned", nullable: false),
+                    idPlato = table.Column<uint>(type: "int unsigned", nullable: false),
+                    Cantidad = table.Column<sbyte>(type: "tinyint", nullable: false),
+                    PrecioUnitario = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Comentarios = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true, collation: "utf8mb4_0900_ai_ci")
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Detallepedidos", x => x.IdDetallePedido);
+                    table.PrimaryKey("PRIMARY", x => x.idDetallePedido);
                     table.ForeignKey(
-                        name: "FK_Detallepedidos_Pedidos_IdPedidoNavigationIdPedido",
-                        column: x => x.IdPedidoNavigationIdPedido,
-                        principalTable: "Pedidos",
-                        principalColumn: "IdPedido",
+                        name: "fk_DetallePedido_Pedido",
+                        column: x => x.idPedido,
+                        principalTable: "pedido",
+                        principalColumn: "idPedido",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Detallepedidos_plato_IdPlatoNavigationIdPlato",
-                        column: x => x.IdPlatoNavigationIdPlato,
+                        name: "fk_DetallePedido_Plato",
+                        column: x => x.idPlato,
                         principalTable: "plato",
                         principalColumn: "idPlato",
                         onDelete: ReferentialAction.Cascade);
@@ -438,14 +430,14 @@ namespace Api.Migrations
                 column: "IdUsuarioNavigationIdUsuario");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Detallepedidos_IdPedidoNavigationIdPedido",
-                table: "Detallepedidos",
-                column: "IdPedidoNavigationIdPedido");
+                name: "IX_detallepedido_idPedido",
+                table: "detallepedido",
+                column: "idPedido");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Detallepedidos_IdPlatoNavigationIdPlato",
-                table: "Detallepedidos",
-                column: "IdPlatoNavigationIdPlato");
+                name: "IX_detallepedido_idPlato",
+                table: "detallepedido",
+                column: "idPlato");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Historialdisponibilidads_IdPlatoNavigationIdPlato",
@@ -453,24 +445,24 @@ namespace Api.Migrations
                 column: "IdPlatoNavigationIdPlato");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pedidos_IdEstadoPedidoNavigationIdEstadoPedido",
-                table: "Pedidos",
-                column: "IdEstadoPedidoNavigationIdEstadoPedido");
+                name: "IX_pedido_idEstadoPedido",
+                table: "pedido",
+                column: "idEstadoPedido");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pedidos_IdMetodoPagoNavigationIdMetodoPago",
-                table: "Pedidos",
-                column: "IdMetodoPagoNavigationIdMetodoPago");
+                name: "IX_pedido_idMetodoPago",
+                table: "pedido",
+                column: "idMetodoPago");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pedidos_IdReservaNavigationIdReserva",
-                table: "Pedidos",
-                column: "IdReservaNavigationIdReserva");
+                name: "IX_pedido_idReserva",
+                table: "pedido",
+                column: "idReserva");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pedidos_IdUsuarioNavigationIdUsuario",
-                table: "Pedidos",
-                column: "IdUsuarioNavigationIdUsuario");
+                name: "IX_pedido_idUsuario",
+                table: "pedido",
+                column: "idUsuario");
 
             migrationBuilder.CreateIndex(
                 name: "IX_plato_idCategoria",
@@ -488,14 +480,14 @@ namespace Api.Migrations
                 column: "IdPlatoNavigationIdPlato");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservas_IdMesaNavigationIdMesa",
-                table: "Reservas",
-                column: "IdMesaNavigationIdMesa");
+                name: "IX_reserva_idMesa",
+                table: "reserva",
+                column: "idMesa");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reservas_IdUsuarioNavigationIdUsuario",
-                table: "Reservas",
-                column: "IdUsuarioNavigationIdUsuario");
+                name: "IX_reserva_idUsuario",
+                table: "reserva",
+                column: "idUsuario");
         }
 
         /// <inheritdoc />
@@ -508,7 +500,7 @@ namespace Api.Migrations
                 name: "Configuracionrestaurantes");
 
             migrationBuilder.DropTable(
-                name: "Detallepedidos");
+                name: "detallepedido");
 
             migrationBuilder.DropTable(
                 name: "Historialdisponibilidads");
@@ -520,7 +512,7 @@ namespace Api.Migrations
                 name: "Platoingredientes");
 
             migrationBuilder.DropTable(
-                name: "Pedidos");
+                name: "pedido");
 
             migrationBuilder.DropTable(
                 name: "Ingredientes");
@@ -529,19 +521,19 @@ namespace Api.Migrations
                 name: "plato");
 
             migrationBuilder.DropTable(
-                name: "Estadopedidos");
+                name: "estadopedido");
 
             migrationBuilder.DropTable(
-                name: "Metodopagos");
+                name: "Metodopago");
 
             migrationBuilder.DropTable(
-                name: "Reservas");
+                name: "reserva");
 
             migrationBuilder.DropTable(
-                name: "Categoriaplatos");
+                name: "categoriaplato");
 
             migrationBuilder.DropTable(
-                name: "Mesas");
+                name: "mesa");
 
             migrationBuilder.DropTable(
                 name: "usuario");

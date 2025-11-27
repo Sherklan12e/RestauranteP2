@@ -10,6 +10,10 @@ import Carrito from './pages/Carrito';
 import MisPedidos from './pages/MisPedidos';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminPedidos from './pages/AdminPedidos';
+import AdminMesas from './pages/AdminMesas';
+import AdminPlatos from './pages/AdminPlatos';
 import './App.css';
 
 function App() {
@@ -27,6 +31,10 @@ function App() {
             <Route path="/mis-pedidos" element={<MisPedidos />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/pedidos" element={<AdminPedidos />} />
+            <Route path="/admin/mesas" element={<AdminMesas />} />
+            <Route path="/admin/platos" element={<AdminPlatos />} />
           </Routes>
         </Layout>
       </Router>

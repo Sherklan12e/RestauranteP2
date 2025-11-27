@@ -27,7 +27,9 @@ public class UsuariosController : ControllerBase
             Apellido = u.Apellido,
             Email = u.Email,
             Telefono = u.Telefono,
-            FechaRegistro = u.FechaRegistro
+            FechaRegistro = u.FechaRegistro,
+            Rol = u.Rol
+            
         })
         .ToListAsync();
 
@@ -46,6 +48,7 @@ public async Task<ActionResult<UsuarioDTO>> GetUsuario(uint id)
             Apellido = u.Apellido,
             Email = u.Email,
             Telefono = u.Telefono,
+            Rol = u.Rol,
             FechaRegistro = u.FechaRegistro
         })
         .FirstOrDefaultAsync();
@@ -82,6 +85,7 @@ public async Task<ActionResult<UsuarioDTO>> PostUsuario(UsuarioCreateDTO dto)
         Apellido = usuario.Apellido,
         Email = usuario.Email,
         Telefono = usuario.Telefono,
+        Rol = usuario.Rol,
         FechaRegistro = usuario.FechaRegistro
     };
 

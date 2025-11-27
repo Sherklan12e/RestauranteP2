@@ -3,3 +3,4 @@ SOURCE 01-StoredProcedure.sql;
 SOURCE 02-StoredFunction.sql;
 SOURCE 03-Triggers.sql;
 SOURCE 04-Inserts.sql;
+SOURCE 05-AdminUser.sql;

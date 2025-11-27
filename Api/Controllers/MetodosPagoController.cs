@@ -19,7 +19,7 @@ public class MetodosPagoController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<object>>> GetMetodosPago()
     {
-        var metodos = await _context.Metodopagos
+        var metodos = await _context.Metodopago
             .Where(m => m.Activo == true)
             .Select(m => new
             {
@@ -36,7 +36,7 @@ public class MetodosPagoController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<object>> GetMetodoPago(uint id)
     {
-        var metodo = await _context.Metodopagos
+        var metodo = await _context.Metodopago
             .Where(m => m.IdMetodoPago == id)
             .Select(m => new
             {

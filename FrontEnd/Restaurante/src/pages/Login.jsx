@@ -44,12 +44,18 @@ function Login() {
         nombre: usuario.nombre,
         apellido: usuario.apellido,
         email: usuario.email,
+        rol: usuario.rol,
       };
-
-      localStorage.setItem('usuario', JSON.stringify(usuarioLogin));
       
-      // Redirigir
-      navigate('/');
+      console.log(usuarioLogin)  
+      localStorage.setItem('usuario', JSON.stringify(usuarioLogin));
+      console.log(usuarioLogin)
+      // Redirigir según el rol
+      if (usuario.rol === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
       
     } catch (err) {
       console.error('Error en login:', err);

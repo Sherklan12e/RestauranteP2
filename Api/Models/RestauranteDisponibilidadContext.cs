@@ -17,13 +17,13 @@ public partial class RestauranteDisponibilidadContext : DbContext
     public virtual DbSet<Usuario> Usuarios { get; set; }
     public virtual DbSet<Plato> Platos { get; set; }
     public virtual DbSet<Categoriaplato> Categoriaplatos { get; set; }
-    public virtual DbSet<Pedido> Pedidos { get; set; }
+    public virtual DbSet<Pedido> Pedido { get; set; }
     public virtual DbSet<Detallepedido> Detallepedidos { get; set; }
-    public virtual DbSet<Estadopedido> Estadopedidos { get; set; }
+    public virtual DbSet<Estadopedido> Estadopedido { get; set; }
     public virtual DbSet<Reserva> Reservas { get; set; }
     public virtual DbSet<Calificacion> Calificacions { get; set; }
     public virtual DbSet<Mesa> Mesas { get; set; }
-    public virtual DbSet<Metodopago> Metodopagos { get; set; }
+    public virtual DbSet<Metodopago> Metodopago { get; set; }
     public virtual DbSet<Ingrediente> Ingredientes { get; set; }
     public virtual DbSet<Platoingrediente> Platoingredientes { get; set; }
     public virtual DbSet<Historialdisponibilidad> Historialdisponibilidads { get; set; }
@@ -49,6 +49,7 @@ public partial class RestauranteDisponibilidadContext : DbContext
             entity.Property(e => e.Contrasena).HasMaxLength(64);
             entity.Property(e => e.FechaRegistro).HasColumnType("datetime");
             entity.Property(e => e.Activo).HasDefaultValue(true);
+            entity.Property(e => e.Rol).HasMaxLength(20).HasDefaultValue("cliente");
         });
 
         // Configuración de la tabla Plato
@@ -102,24 +103,96 @@ public partial class RestauranteDisponibilidadContext : DbContext
         entity.HasKey(e => e.IdMesa).HasName("PRIMARY");
         entity.ToTable("mesa"); // 👈 fuerza a usar el nombre correcto en MySQL
 
-        entity.Property(e => e.IdMesa).HasColumnName("idMesa");
-        entity.Property(e => e.NumeroMesa).HasMaxLength(20);
-        entity.Property(e => e.Capacidad).HasColumnType("tinyint");
-        entity.Property(e => e.Activa).HasDefaultValue(true);
-    });
-// Configuración de la tabla Categoriaplato
-modelBuilder.Entity<Categoriaplato>(entity =>
-    {
-    entity.HasKey(e => e.IdCategoria).HasName("PRIMARY");
-    entity.ToTable("categoriaplato"); // 👈 fuerza el nombre correcto en MySQL
+            entity.Property(e => e.IdMesa).HasColumnName("idMesa");
+            entity.Property(e => e.NumeroMesa).HasMaxLength(20);
+            entity.Property(e => e.Capacidad).HasColumnType("tinyint");
+            entity.Property(e => e.Activa).HasDefaultValue(true);
+        });
 
-    entity.Property(e => e.IdCategoria).HasColumnName("idCategoria");
-    entity.Property(e => e.Nombre).HasMaxLength(100);
-    entity.Property(e => e.Descripcion).HasMaxLength(255);
-    });
+        // Configuración de la tabla Categoriaplato
+        modelBuilder.Entity<Categoriaplato>(entity =>
+        {
+            entity.HasKey(e => e.IdCategoria).HasName("PRIMARY");
+            entity.ToTable("categoriaplato"); // 
 
-        // Configuraciones adicionales para otras tablas...
-        // (Puedes mantener tu configuración actual aquí)
+            entity.Property(e => e.IdCategoria).HasColumnName("idCategoria");
+            entity.Property(e => e.Nombre).HasMaxLength(100);
+            entity.Property(e => e.Descripcion).HasMaxLength(255);
+        });
+
+        // Configuración de la tabla Pedido
+        modelBuilder.Entity<Pedido>(entity =>
+        {
+            entity.HasKey(e => e.IdPedido).HasName("PRIMARY");
+            entity.ToTable("pedido");
+
+            entity.Property(e => e.IdPedido).HasColumnName("idPedido");
+            entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
+            entity.Property(e => e.IdReserva).HasColumnName("idReserva");
+            entity.Property(e => e.IdEstadoPedido).HasColumnName("idEstadoPedido");
+            entity.Property(e => e.IdMetodoPago).HasColumnName("idMetodoPago");
+            entity.Property(e => e.FechaHoraPedido).HasColumnType("datetime");
+            entity.Property(e => e.FechaHoraEntregaEstimada).HasColumnType("datetime");
+            entity.Property(e => e.FechaHoraEntregaReal).HasColumnType("datetime");
+            entity.Property(e => e.Total).HasColumnType("decimal(10,2)");
+            entity.Property(e => e.Comentarios).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdUsuarioNavigation)
+                .WithMany(p => p.Pedidos)
+                .HasForeignKey(d => d.IdUsuario)
+                .HasConstraintName("fk_Pedido_Usuario");
+
+            entity.HasOne(d => d.IdEstadoPedidoNavigation)
+                .WithMany(p => p.Pedidos)
+                .HasForeignKey(d => d.IdEstadoPedido)
+                .HasConstraintName("fk_Pedido_EstadoPedido");
+
+            entity.HasOne(d => d.IdMetodoPagoNavigation)
+                .WithMany(p => p.Pedidos)
+                .HasForeignKey(d => d.IdMetodoPago)
+                .HasConstraintName("fk_Pedido_MetodoPago");
+
+            entity.HasOne(d => d.IdReservaNavigation)
+                .WithMany(p => p.Pedidos)
+                .HasForeignKey(d => d.IdReserva)
+                .HasConstraintName("fk_Pedido_Reserva");
+        });
+
+        // Configuración de la tabla Estadopedido
+        modelBuilder.Entity<Estadopedido>(entity =>
+        {
+            entity.HasKey(e => e.IdEstadoPedido).HasName("PRIMARY");
+            entity.ToTable("estadopedido");
+
+            entity.Property(e => e.IdEstadoPedido).HasColumnName("idEstadoPedido");
+            entity.Property(e => e.Nombre).HasMaxLength(50);
+            entity.Property(e => e.Descripcion).HasMaxLength(255);
+        });
+
+        // Configuración de la tabla Detallepedido
+        modelBuilder.Entity<Detallepedido>(entity =>
+        {
+            entity.HasKey(e => e.IdDetallePedido).HasName("PRIMARY");
+            entity.ToTable("detallepedido");
+
+            entity.Property(e => e.IdDetallePedido).HasColumnName("idDetallePedido");
+            entity.Property(e => e.IdPedido).HasColumnName("idPedido");
+            entity.Property(e => e.IdPlato).HasColumnName("idPlato");
+            entity.Property(e => e.Cantidad).HasColumnType("tinyint");
+            entity.Property(e => e.PrecioUnitario).HasColumnType("decimal(10,2)");
+            entity.Property(e => e.Subtotal).HasColumnType("decimal(10,2)");
+            entity.Property(e => e.Comentarios).HasMaxLength(255);
+
+            entity.HasOne(d => d.IdPedidoNavigation)
+                .WithMany(p => p.Detallepedidos)
+                .HasForeignKey(d => d.IdPedido)
+                .HasConstraintName("fk_DetallePedido_Pedido");
+
+            entity.HasOne(d => d.IdPlatoNavigation)
+                .WithMany(p => p.Detallepedidos)
+                .HasForeignKey(d => d.IdPlato)
+                .HasConstraintName("fk_DetallePedido_Plato");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

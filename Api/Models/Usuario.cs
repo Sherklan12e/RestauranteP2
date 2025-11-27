@@ -25,6 +25,11 @@ public partial class Usuario
 
     public bool Activo { get; set; } = true;
 
+    /// <summary>
+    /// Rol del usuario: "cliente" o "admin"
+    /// </summary>
+    public string Rol { get; set; } = "cliente";
+
  // Navigation properties
     public virtual ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
     public virtual ICollection<Pedido> Pedidos { get; set; } = new List<Pedido>();

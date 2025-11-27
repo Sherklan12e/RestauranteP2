@@ -19,7 +19,7 @@ public class PedidosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PedidoDTO>>> GetPedidos()
     {
-        var pedidos = await _context.Pedidos
+        var pedidos = await _context.Pedido
             .Include(p => p.IdUsuarioNavigation)
             .Include(p => p.IdEstadoPedidoNavigation)
             .Include(p => p.IdMetodoPagoNavigation)
@@ -61,7 +61,7 @@ public class PedidosController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<PedidoDTO>> GetPedido(uint id)
     {
-        var pedido = await _context.Pedidos
+        var pedido = await _context.Pedido
             .Include(p => p.IdUsuarioNavigation)
             .Include(p => p.IdEstadoPedidoNavigation)
             .Include(p => p.IdMetodoPagoNavigation)
@@ -109,7 +109,7 @@ public class PedidosController : ControllerBase
     [HttpGet("usuario/{usuarioId}")]
     public async Task<ActionResult<IEnumerable<PedidoDTO>>> GetPedidosPorUsuario(uint usuarioId)
     {
-        var pedidos = await _context.Pedidos
+        var pedidos = await _context.Pedido
             .Include(p => p.IdUsuarioNavigation)
             .Include(p => p.IdEstadoPedidoNavigation)
             .Include(p => p.IdMetodoPagoNavigation)
@@ -154,7 +154,7 @@ public class PedidosController : ControllerBase
     public async Task<ActionResult<PedidoDTO>> PostPedido(PedidoCreateDTO dto)
     {
         // Obtener el estado "Pendiente"
-        var estadoPendiente = await _context.Estadopedidos
+        var estadoPendiente = await _context.Estadopedido
             .FirstOrDefaultAsync(e => e.Nombre == "Pendiente");
 
         if (estadoPendiente == null)
@@ -185,7 +185,7 @@ public class PedidosController : ControllerBase
             Total = 0
         };
 
-        _context.Pedidos.Add(pedido);
+        _context.Pedido.Add(pedido);
         await _context.SaveChangesAsync();
 
         // Crear los detalles del pedido
@@ -224,13 +224,13 @@ public class PedidosController : ControllerBase
     [HttpPut("{id}/estado")]
     public async Task<IActionResult> UpdateEstadoPedido(uint id, [FromBody] string estadoNombre)
     {
-        var pedido = await _context.Pedidos.FindAsync(id);
+        var pedido = await _context.Pedido.FindAsync(id);
         if (pedido == null)
         {
             return NotFound();
         }
 
-        var estado = await _context.Estadopedidos
+        var estado = await _context.Estadopedido
             .FirstOrDefaultAsync(e => e.Nombre == estadoNombre);
 
         if (estado == null)
@@ -255,7 +255,7 @@ public class PedidosController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePedido(uint id)
     {
-        var pedido = await _context.Pedidos
+        var pedido = await _context.Pedido
             .Include(p => p.Detallepedidos)
             .FirstOrDefaultAsync(p => p.IdPedido == id);
 
@@ -268,7 +268,7 @@ public class PedidosController : ControllerBase
         _context.Detallepedidos.RemoveRange(pedido.Detallepedidos);
         
         // Eliminar pedido
-        _context.Pedidos.Remove(pedido);
+        _context.Pedido.Remove(pedido);
         await _context.SaveChangesAsync();
 
         return NoContent();

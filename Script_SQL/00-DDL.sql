@@ -28,9 +28,11 @@ CREATE TABLE IF NOT EXISTS `RestauranteDisponibilidad`.`Usuario` (
   `Contrasena` CHAR(64) NOT NULL,
   `FechaRegistro` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `Activo` BOOLEAN NOT NULL DEFAULT TRUE,
+  `Rol` VARCHAR(20) NOT NULL DEFAULT 'cliente' COMMENT 'Rol del usuario: cliente o admin',
   PRIMARY KEY (`idUsuario`),
   UNIQUE INDEX `Email_UNIQUE` (`Email` ASC),
   INDEX `idx_telefono` (`Telefono` ASC)
+  
 )
 ENGINE = InnoDB
 COMMENT = 'Tabla de usuarios/clientes del restaurante';
