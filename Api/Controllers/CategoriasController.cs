@@ -18,26 +18,43 @@ namespace Api.Controllers
 
         // ✅ GET: api/Categoriaplato
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoriaplato>>> GetCategorias()
+        public async Task<ActionResult<IEnumerable<CategoriaPlatoDto>>> GetCategorias()
         {
-            return await _context.Categoriaplatos.ToListAsync();
+            var categorias = await _context.Categoriaplatos
+                .Select(c => new CategoriaPlatoDto
+                {
+                    IdCategoria = c.IdCategoria,
+                    Nombre = c.Nombre,
+                    Descripcion = c.Descripcion
+                })
+                .ToListAsync();
+
+            return Ok(categorias);
         }
 
         // ✅ GET: api/Categoriaplato/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Categoriaplato>> GetCategoria(uint id)
+        public async Task<ActionResult<CategoriaPlatoDto>> GetCategoria(uint id)
         {
-            var categoria = await _context.Categoriaplatos.FindAsync(id);
+            var categoria = await _context.Categoriaplatos
+                .Where(c => c.IdCategoria == id)
+                .Select(c => new CategoriaPlatoDto
+                {
+                    IdCategoria = c.IdCategoria,
+                    Nombre = c.Nombre,
+                    Descripcion = c.Descripcion
+                })
+                .FirstOrDefaultAsync();
 
             if (categoria == null)
                 return NotFound();
 
-            return categoria;
+            return Ok(categoria);
         }
 
         // ✅ POST: api/Categoriaplato
         [HttpPost]
-        public async Task<ActionResult<Categoriaplato>> CreateCategoria(CategoriaCreateDTO dto)
+        public async Task<ActionResult<CategoriaPlatoDto>> CreateCategoria(CategoriaCreateDTO dto)
         {
             var categoria = new Categoriaplato
             {
@@ -48,7 +65,14 @@ namespace Api.Controllers
             _context.Categoriaplatos.Add(categoria);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCategoria), new { id = categoria.IdCategoria }, categoria);
+            var categoriaDto = new CategoriaPlatoDto
+            {
+                IdCategoria = categoria.IdCategoria,
+                Nombre = categoria.Nombre,
+                Descripcion = categoria.Descripcion
+            };
+
+            return CreatedAtAction(nameof(GetCategoria), new { id = categoria.IdCategoria }, categoriaDto);
         }
 
         // ✅ PUT: api/Categoriaplato/5

@@ -1,0 +1,254 @@
+.menu-page {
+  width: 100%;
+}
+
+.menu-page h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.menu-filters {
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-box {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.categorias-filter {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.7rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+  color: #333;
+}
+
+.filter-btn:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.filter-btn.active {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.platos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.menu-plato-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.menu-plato-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.plato-imagen {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.plato-imagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-imagen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+}
+
+.menu-del-dia-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff6b6b;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.plato-detalles {
+  padding: 1.5rem;
+}
+
+.plato-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+
+.plato-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+  flex: 1;
+}
+
+.plato-precio {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #667eea;
+  margin-left: 1rem;
+}
+
+.plato-categoria {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.plato-descripcion {
+  color: #666;
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.plato-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.plato-header-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.plato-acciones {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-ver-detalle {
+  flex: 1;
+  text-align: center;
+  padding: 0.7rem;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-ver-detalle:hover {
+  background: #667eea;
+  color: white;
+}
+
+.btn-agregar-menu {
+  flex: 1;
+  padding: 0.7rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.btn-agregar-menu:hover {
+  transform: translateY(-2px);
+}
+
+.disponibilidad.disponible {
+  color: #51cf66;
+  font-weight: 600;
+}
+
+.disponibilidad.no-disponible {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
+.no-results {
+  text-align: center;
+  padding: 4rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.no-results p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .platos-container {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-page h1 {
+    font-size: 2rem;
+  }
+}

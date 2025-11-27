@@ -1,0 +1,120 @@
+.calificar-plato {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.calificar-plato h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.calificar-plato .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.calificar-plato label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.estrellas-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.estrella-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  padding: 0;
+  filter: grayscale(100%);
+  opacity: 0.5;
+}
+
+.estrella-btn:hover {
+  transform: scale(1.2);
+}
+
+.estrella-btn.activa {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+.puntuacion-numero {
+  margin-left: 1rem;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #667eea;
+}
+
+.calificar-plato textarea {
+  width: 100%;
+  padding: 0.8rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+
+.calificar-plato textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.caracteres-restantes {
+  display: block;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.btn-enviar-calificacion {
+  width: 100%;
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #333;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.btn-enviar-calificacion:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-enviar-calificacion:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.calificacion-exito {
+  background: #d4edda;
+  color: #155724;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}

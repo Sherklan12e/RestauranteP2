@@ -356,4 +356,3 @@ CREATE TABLE IF NOT EXISTS `RestauranteDisponibilidad`.`ConfiguracionRestaurante
 )
 ENGINE = InnoDB
 COMMENT = 'Configuraciones generales del sistema (tiempo antes de cierre para pedidos, etc.)';
-  

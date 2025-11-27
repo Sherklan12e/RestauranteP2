@@ -16,8 +16,7 @@ public class UsuariosController : ControllerBase
     }
 
     [HttpGet]
-    [HttpGet]
-public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
+    public async Task<ActionResult<IEnumerable<UsuarioDTO>>> GetUsuarios()
 {
     var usuarios = await _context.Usuarios
         .Where(u => u.Activo)
@@ -132,7 +131,7 @@ public async Task<IActionResult> PutUsuario(uint id, UsuarioUpdateDTO dto)
 
     private bool UsuarioExists(uint id)
     {
-        throw new NotImplementedException();
+        return _context.Usuarios.Any(e => e.IdUsuario == id);
     }
 
     [HttpDelete("{id}")]

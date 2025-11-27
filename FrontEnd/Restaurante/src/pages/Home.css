@@ -1,0 +1,237 @@
+.home {
+  width: 100%;
+}
+
+.hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4rem 2rem;
+  border-radius: 15px;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+  display: inline-block;
+}
+
+.btn-primary {
+  background: white;
+  color: #667eea;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #667eea;
+}
+
+.destacados {
+  margin-bottom: 4rem;
+}
+
+.destacados h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.platos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.plato-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.plato-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.plato-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.plato-info {
+  padding: 1.5rem;
+}
+
+.plato-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.categoria {
+  color: #667eea;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.descripcion {
+  color: #666;
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.plato-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.plato-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.plato-title-link:hover h3 {
+  color: #667eea;
+}
+
+.plato-acciones-home {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-ver-mas {
+  flex: 1;
+  text-align: center;
+  padding: 0.7rem;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-ver-mas:hover {
+  background: #667eea;
+  color: white;
+}
+
+.btn-agregar-home {
+  padding: 0.7rem 1.2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.btn-agregar-home:hover {
+  transform: translateY(-2px);
+}
+
+.precio {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #667eea;
+}
+
+.badge {
+  background: #ff6b6b;
+  color: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 4rem;
+  padding: 3rem;
+  background: #f8f9fa;
+  border-radius: 15px;
+}
+
+.feature {
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.feature h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.feature p {
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .platos-grid {
+    grid-template-columns: 1fr;
+  }
+}

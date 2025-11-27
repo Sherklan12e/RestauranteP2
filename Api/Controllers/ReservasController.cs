@@ -16,37 +16,82 @@ public class ReservasController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Reserva>>> GetReservas()
+    public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservas()
     {
-        return await _context.Reservas
+        var reservas = await _context.Reservas
             .Include(r => r.IdUsuarioNavigation)
             .Include(r => r.IdMesaNavigation)
+            .Select(r => new ReservaDTO
+            {
+                IdReserva = r.IdReserva,
+                IdUsuario = r.IdUsuario,
+                NombreUsuario = r.IdUsuarioNavigation.Nombre + " " + r.IdUsuarioNavigation.Apellido,
+                IdMesa = r.IdMesa,
+                NumeroMesa = r.IdMesaNavigation != null ? r.IdMesaNavigation.NumeroMesa : null,
+                FechaHora = r.FechaHora,
+                CantidadPersonas = r.CantidadPersonas,
+                Estado = r.Estado,
+                Comentarios = r.Comentarios,
+                FechaCreacion = r.FechaCreacion
+            })
             .ToListAsync();
+
+        return Ok(reservas);
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Reserva>> GetReserva(uint id)
+    public async Task<ActionResult<ReservaDTO>> GetReserva(uint id)
     {
         var reserva = await _context.Reservas
             .Include(r => r.IdUsuarioNavigation)
             .Include(r => r.IdMesaNavigation)
-            .FirstOrDefaultAsync(r => r.IdReserva == id);
+            .Where(r => r.IdReserva == id)
+            .Select(r => new ReservaDTO
+            {
+                IdReserva = r.IdReserva,
+                IdUsuario = r.IdUsuario,
+                NombreUsuario = r.IdUsuarioNavigation.Nombre + " " + r.IdUsuarioNavigation.Apellido,
+                IdMesa = r.IdMesa,
+                NumeroMesa = r.IdMesaNavigation != null ? r.IdMesaNavigation.NumeroMesa : null,
+                FechaHora = r.FechaHora,
+                CantidadPersonas = r.CantidadPersonas,
+                Estado = r.Estado,
+                Comentarios = r.Comentarios,
+                FechaCreacion = r.FechaCreacion
+            })
+            .FirstOrDefaultAsync();
 
         if (reserva == null)
         {
             return NotFound();
         }
 
-        return reserva;
+        return Ok(reserva);
     }
 
     [HttpGet("usuario/{usuarioId}")]
-    public async Task<ActionResult<IEnumerable<Reserva>>> GetReservasPorUsuario(uint usuarioId)
+    public async Task<ActionResult<IEnumerable<ReservaDTO>>> GetReservasPorUsuario(uint usuarioId)
     {
-        return await _context.Reservas
+        var reservas = await _context.Reservas
             .Where(r => r.IdUsuario == usuarioId)
             .Include(r => r.IdMesaNavigation)
+            .Include(r => r.IdUsuarioNavigation)
+            .Select(r => new ReservaDTO
+            {
+                IdReserva = r.IdReserva,
+                IdUsuario = r.IdUsuario,
+                NombreUsuario = r.IdUsuarioNavigation.Nombre + " " + r.IdUsuarioNavigation.Apellido,
+                IdMesa = r.IdMesa,
+                NumeroMesa = r.IdMesaNavigation != null ? r.IdMesaNavigation.NumeroMesa : null,
+                FechaHora = r.FechaHora,
+                CantidadPersonas = r.CantidadPersonas,
+                Estado = r.Estado,
+                Comentarios = r.Comentarios,
+                FechaCreacion = r.FechaCreacion
+            })
             .ToListAsync();
+
+        return Ok(reservas);
     }
 [HttpPost]
 public async Task<ActionResult<ReservaDTO>> PostReserva(ReservaCreateDTO dto)
