@@ -1,56 +1,95 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Models;
-
 namespace Api.Controllers;
 
-[ApiController]
 [Route("api/[controller]")]
-public class MetodosPagoController : ControllerBase
+
+[ApiController]
+public class MetodoPagoController : ControllerBase
 {
     private readonly RestauranteDisponibilidadContext _context;
 
-    public MetodosPagoController(RestauranteDisponibilidadContext context)
+    public MetodoPagoController(RestauranteDisponibilidadContext context)
     {
         _context = context;
     }
 
-    // GET: api/metodospago
+    // GET: api/MetodoPago
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<object>>> GetMetodosPago()
+    public async Task<ActionResult<IEnumerable<MetodoPagoReadDTO>>> GetMetodosPago()
     {
-        var metodos = await _context.Metodopago
-            .Where(m => m.Activo == true)
-            .Select(m => new
+        return await _context.Set<Metodopago>()
+            .Select(m => new MetodoPagoReadDTO
             {
-                idMetodoPago = m.IdMetodoPago,
-                tipoMedioPago = m.TipoMedioPago,
-                activo = m.Activo
+                IdMetodoPago = m.IdMetodoPago,
+                TipoMedioPago = m.TipoMedioPago,
+                Activo = m.Activo
             })
             .ToListAsync();
-
-        return Ok(metodos);
     }
 
-    // GET: api/metodospago/{id}
+    // GET: api/MetodoPago/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<object>> GetMetodoPago(uint id)
+    public async Task<ActionResult<MetodoPagoReadDTO>> GetMetodoPago(uint id)
     {
-        var metodo = await _context.Metodopago
-            .Where(m => m.IdMetodoPago == id)
-            .Select(m => new
-            {
-                idMetodoPago = m.IdMetodoPago,
-                tipoMedioPago = m.TipoMedioPago,
-                activo = m.Activo
-            })
-            .FirstOrDefaultAsync();
+        var metodo = await _context.Set<Metodopago>().FindAsync(id);
+        if (metodo == null)
+            return NotFound();
+
+        return new MetodoPagoReadDTO
+        {
+            IdMetodoPago = metodo.IdMetodoPago,
+            TipoMedioPago = metodo.TipoMedioPago,
+            Activo = metodo.Activo
+        };
+    }
+
+    // POST: api/MetodoPago
+    [HttpPost]
+    public async Task<ActionResult> CreateMetodoPago(MetodoPagoCreateDTO dto)
+    {
+        var nuevo = new Metodopago
+        {
+            TipoMedioPago = dto.TipoMedioPago,
+            Activo = dto.Activo
+        };
+
+        _context.Set<Metodopago>().Add(nuevo);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetMetodoPago), new { id = nuevo.IdMetodoPago }, dto);
+    }
+
+    // PUT: api/MetodoPago/5
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateMetodoPago(uint id, MetodoPagoUpdateDTO dto)
+    {
+        var metodo = await _context.Set<Metodopago>().FindAsync(id);
 
         if (metodo == null)
-        {
             return NotFound();
-        }
 
-        return Ok(metodo);
+        metodo.TipoMedioPago = dto.TipoMedioPago;
+        metodo.Activo = dto.Activo;
+
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    // DELETE: api/MetodoPago/5
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteMetodoPago(uint id)
+    {
+        var metodo = await _context.Set<Metodopago>().FindAsync(id);
+
+        if (metodo == null)
+            return NotFound();
+
+        _context.Remove(metodo);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
     }
 }

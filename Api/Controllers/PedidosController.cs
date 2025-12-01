@@ -2,275 +2,166 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Api.Models;
 
-namespace Api.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class PedidosController : ControllerBase
+namespace Api.Controllers
 {
-    private readonly RestauranteDisponibilidadContext _context;
-
-    public PedidosController(RestauranteDisponibilidadContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PedidosController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly RestauranteDisponibilidadContext _context;
 
-    // GET: api/pedidos
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<PedidoDTO>>> GetPedidos()
-    {
-        var pedidos = await _context.Pedido
-            .Include(p => p.IdUsuarioNavigation)
-            .Include(p => p.IdEstadoPedidoNavigation)
-            .Include(p => p.IdMetodoPagoNavigation)
-            .Include(p => p.Detallepedidos)
-                .ThenInclude(d => d.IdPlatoNavigation)
-            .Select(p => new PedidoDTO
-            {
-                IdPedido = p.IdPedido,
-                IdUsuario = p.IdUsuario,
-                NombreUsuario = p.IdUsuarioNavigation.Nombre + " " + p.IdUsuarioNavigation.Apellido,
-                IdReserva = p.IdReserva,
-                IdEstadoPedido = p.IdEstadoPedido,
-                EstadoNombre = p.IdEstadoPedidoNavigation.Nombre,
-                IdMetodoPago = p.IdMetodoPago,
-                MetodoPagoNombre = p.IdMetodoPagoNavigation != null ? p.IdMetodoPagoNavigation.TipoMedioPago : null,
-                FechaHoraPedido = p.FechaHoraPedido,
-                FechaHoraEntregaEstimada = p.FechaHoraEntregaEstimada,
-                FechaHoraEntregaReal = p.FechaHoraEntregaReal,
-                EsPreOrden = p.EsPreOrden,
-                Total = p.Total,
-                Comentarios = p.Comentarios,
-                Detalles = p.Detallepedidos.Select(d => new DetallePedidoDTO
-                {
-                    IdDetallePedido = d.IdDetallePedido,
-                    IdPlato = d.IdPlato,
-                    PlatoNombre = d.IdPlatoNavigation.Nombre,
-                    Cantidad = d.Cantidad,
-                    PrecioUnitario = d.PrecioUnitario,
-                    Subtotal = d.Subtotal,
-                    Comentarios = d.Comentarios
-                }).ToList()
-            })
-            .ToListAsync();
-
-        return Ok(pedidos);
-    }
-
-    // GET: api/pedidos/{id}
-    [HttpGet("{id}")]
-    public async Task<ActionResult<PedidoDTO>> GetPedido(uint id)
-    {
-        var pedido = await _context.Pedido
-            .Include(p => p.IdUsuarioNavigation)
-            .Include(p => p.IdEstadoPedidoNavigation)
-            .Include(p => p.IdMetodoPagoNavigation)
-            .Include(p => p.Detallepedidos)
-                .ThenInclude(d => d.IdPlatoNavigation)
-            .Where(p => p.IdPedido == id)
-            .Select(p => new PedidoDTO
-            {
-                IdPedido = p.IdPedido,
-                IdUsuario = p.IdUsuario,
-                NombreUsuario = p.IdUsuarioNavigation.Nombre + " " + p.IdUsuarioNavigation.Apellido,
-                IdReserva = p.IdReserva,
-                IdEstadoPedido = p.IdEstadoPedido,
-                EstadoNombre = p.IdEstadoPedidoNavigation.Nombre,
-                IdMetodoPago = p.IdMetodoPago,
-                MetodoPagoNombre = p.IdMetodoPagoNavigation != null ? p.IdMetodoPagoNavigation.TipoMedioPago : null,
-                FechaHoraPedido = p.FechaHoraPedido,
-                FechaHoraEntregaEstimada = p.FechaHoraEntregaEstimada,
-                FechaHoraEntregaReal = p.FechaHoraEntregaReal,
-                EsPreOrden = p.EsPreOrden,
-                Total = p.Total,
-                Comentarios = p.Comentarios,
-                Detalles = p.Detallepedidos.Select(d => new DetallePedidoDTO
-                {
-                    IdDetallePedido = d.IdDetallePedido,
-                    IdPlato = d.IdPlato,
-                    PlatoNombre = d.IdPlatoNavigation.Nombre,
-                    Cantidad = d.Cantidad,
-                    PrecioUnitario = d.PrecioUnitario,
-                    Subtotal = d.Subtotal,
-                    Comentarios = d.Comentarios
-                }).ToList()
-            })
-            .FirstOrDefaultAsync();
-
-        if (pedido == null)
+        public PedidosController(RestauranteDisponibilidadContext context)
         {
-            return NotFound();
+            _context = context;
         }
 
-        return Ok(pedido);
-    }
+        // ============================
+        //      CREAR PEDIDO
+        // ============================
+        [HttpPost]
+        public async Task<IActionResult> CrearPedido(PedidoCreateDTO dto)
+        {
+            var estadoPendiente = await _context.Estadopedido
+                .FirstOrDefaultAsync(e => e.Nombre == "Pendiente");
 
-    // GET: api/pedidos/usuario/{usuarioId}
-    [HttpGet("usuario/{usuarioId}")]
-    public async Task<ActionResult<IEnumerable<PedidoDTO>>> GetPedidosPorUsuario(uint usuarioId)
-    {
-        var pedidos = await _context.Pedido
-            .Include(p => p.IdUsuarioNavigation)
-            .Include(p => p.IdEstadoPedidoNavigation)
-            .Include(p => p.IdMetodoPagoNavigation)
-            .Include(p => p.Detallepedidos)
-                .ThenInclude(d => d.IdPlatoNavigation)
-            .Where(p => p.IdUsuario == usuarioId)
-            .Select(p => new PedidoDTO
+            if (estadoPendiente == null)
+                return BadRequest("No existe el estado 'Pendiente' en la base de datos.");
+
+            var pedido = new Pedido
             {
-                IdPedido = p.IdPedido,
-                IdUsuario = p.IdUsuario,
-                NombreUsuario = p.IdUsuarioNavigation.Nombre + " " + p.IdUsuarioNavigation.Apellido,
-                IdReserva = p.IdReserva,
-                IdEstadoPedido = p.IdEstadoPedido,
-                EstadoNombre = p.IdEstadoPedidoNavigation.Nombre,
-                IdMetodoPago = p.IdMetodoPago,
-                MetodoPagoNombre = p.IdMetodoPagoNavigation != null ? p.IdMetodoPagoNavigation.TipoMedioPago : null,
-                FechaHoraPedido = p.FechaHoraPedido,
-                FechaHoraEntregaEstimada = p.FechaHoraEntregaEstimada,
-                FechaHoraEntregaReal = p.FechaHoraEntregaReal,
-                EsPreOrden = p.EsPreOrden,
-                Total = p.Total,
-                Comentarios = p.Comentarios,
-                Detalles = p.Detallepedidos.Select(d => new DetallePedidoDTO
-                {
-                    IdDetallePedido = d.IdDetallePedido,
-                    IdPlato = d.IdPlato,
-                    PlatoNombre = d.IdPlatoNavigation.Nombre,
-                    Cantidad = d.Cantidad,
-                    PrecioUnitario = d.PrecioUnitario,
-                    Subtotal = d.Subtotal,
-                    Comentarios = d.Comentarios
-                }).ToList()
-            })
-            .OrderByDescending(p => p.FechaHoraPedido)
-            .ToListAsync();
-
-        return Ok(pedidos);
-    }
-
-    // POST: api/pedidos
-    [HttpPost]
-    public async Task<ActionResult<PedidoDTO>> PostPedido(PedidoCreateDTO dto)
-    {
-        // Obtener el estado "Pendiente"
-        var estadoPendiente = await _context.Estadopedido
-            .FirstOrDefaultAsync(e => e.Nombre == "Pendiente");
-
-        if (estadoPendiente == null)
-        {
-            return BadRequest("No se encontró el estado 'Pendiente' en la base de datos");
-        }
-
-        // Validar que los platos existen y están disponibles
-        foreach (var detalle in dto.Detalles)
-        {
-            var plato = await _context.Platos.FindAsync(detalle.IdPlato);
-            if (plato == null || !plato.Activo || !plato.Disponible)
-            {
-                return BadRequest($"El plato con ID {detalle.IdPlato} no está disponible");
-            }
-        }
-
-        // Crear el pedido
-        var pedido = new Pedido
-        {
-            IdUsuario = dto.IdUsuario,
-            IdReserva = dto.IdReserva,
-            IdEstadoPedido = estadoPendiente.IdEstadoPedido,
-            IdMetodoPago = dto.IdMetodoPago,
-            FechaHoraPedido = DateTime.Now,
-            EsPreOrden = dto.EsPreOrden,
-            Comentarios = dto.Comentarios,
-            Total = 0
-        };
-
-        _context.Pedido.Add(pedido);
-        await _context.SaveChangesAsync();
-
-        // Crear los detalles del pedido
-        decimal totalPedido = 0;
-        foreach (var detalleDto in dto.Detalles)
-        {
-            var plato = await _context.Platos.FindAsync(detalleDto.IdPlato);
-            if (plato == null) continue;
-
-            var subtotal = plato.Precio * detalleDto.Cantidad;
-            totalPedido += subtotal;
-
-            var detalle = new Detallepedido
-            {
-                IdPedido = pedido.IdPedido,
-                IdPlato = detalleDto.IdPlato,
-                Cantidad = detalleDto.Cantidad,
-                PrecioUnitario = plato.Precio,
-                Subtotal = subtotal,
-                Comentarios = detalleDto.Comentarios
+                IdUsuario = dto.IdUsuario,
+                IdReserva = dto.IdReserva,
+                IdMetodoPago = dto.IdMetodoPago,
+                IdEstadoPedido = estadoPendiente.IdEstadoPedido,
+                EsPreOrden = dto.EsPreOrden,
+                Comentarios = dto.Comentarios,
+                FechaHoraPedido = DateTime.Now,
+                Total = 0
             };
 
-            _context.Detallepedidos.Add(detalle);
+            foreach (var d in dto.Detalles)
+            {
+                var plato = await _context.Platos.FindAsync(d.IdPlato);
+                if (plato == null)
+                    return BadRequest($"No existe el plato con ID {d.IdPlato}");
+
+                var detalle = new Detallepedido
+                {
+                    IdPlato = d.IdPlato,
+                    Cantidad = d.Cantidad,
+                    Comentarios = d.Comentarios,
+                    PrecioUnitario = plato.Precio,
+                    Subtotal = plato.Precio * d.Cantidad
+                };
+
+                pedido.Detallepedidos.Add(detalle);
+                pedido.Total += detalle.Subtotal;
+            }
+
+            _context.Pedido.Add(pedido);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Pedido creado correctamente", pedido.IdPedido });
         }
 
-        // Actualizar el total del pedido
-        pedido.Total = totalPedido;
-        await _context.SaveChangesAsync();
-
-        // Retornar el pedido creado
-        var pedidoDTO = await GetPedido(pedido.IdPedido);
-        return pedidoDTO.Result;
-    }
-
-    // PUT: api/pedidos/{id}/estado
-    [HttpPut("{id}/estado")]
-    public async Task<IActionResult> UpdateEstadoPedido(uint id, [FromBody] string estadoNombre)
-    {
-        var pedido = await _context.Pedido.FindAsync(id);
-        if (pedido == null)
+        // ============================
+        //      VER PEDIDO POR ID
+        // ============================
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PedidoDTO>> ObtenerPedido(uint id)
         {
-            return NotFound();
+            var pedido = await _context.Pedido
+                .Include(p => p.Detallepedidos)
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
+
+            if (pedido == null)
+                return NotFound("Pedido no encontrado");
+
+            var dto = new PedidoDTO
+            {
+                IdPedido = pedido.IdPedido,
+                IdUsuario = pedido.IdUsuario,
+                IdReserva = pedido.IdReserva,
+                IdEstadoPedido = pedido.IdEstadoPedido,
+                IdMetodoPago = pedido.IdMetodoPago,
+                FechaHoraPedido = pedido.FechaHoraPedido,
+                EsPreOrden = pedido.EsPreOrden,
+                Total = pedido.Total,
+                Comentarios = pedido.Comentarios,
+                Detalles = pedido.Detallepedidos.Select(d => new PedidoDetalleDTO
+                {
+                    IdDetallePedido = d.IdDetallePedido,
+                    IdPlato = d.IdPlato,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Subtotal = d.Subtotal,
+                    Comentarios = d.Comentarios
+                }).ToList()
+            };
+
+            return Ok(dto);
         }
 
-        var estado = await _context.Estadopedido
-            .FirstOrDefaultAsync(e => e.Nombre == estadoNombre);
-
-        if (estado == null)
+        // ============================
+        //      ACTUALIZAR PEDIDO
+        // ============================
+        [HttpPut("{id}")]
+        public async Task<IActionResult> ActualizarPedido(uint id, PedidoCreateDTO dto)
         {
-            return BadRequest($"El estado '{estadoNombre}' no existe");
+            var pedido = await _context.Pedido
+                .Include(p => p.Detallepedidos)
+                .FirstOrDefaultAsync(p => p.IdPedido == id);
+
+            if (pedido == null)
+                return NotFound("Pedido no encontrado");
+
+            pedido.IdUsuario = dto.IdUsuario;
+            pedido.IdReserva = dto.IdReserva;
+            pedido.IdMetodoPago = dto.IdMetodoPago;
+            pedido.EsPreOrden = dto.EsPreOrden;
+            pedido.Comentarios = dto.Comentarios;
+
+            pedido.Detallepedidos.Clear();
+            pedido.Total = 0;
+
+            foreach (var d in dto.Detalles)
+            {
+                var plato = await _context.Platos.FindAsync(d.IdPlato);
+                if (plato == null)
+                    return BadRequest($"No existe el plato con ID {d.IdPlato}");
+
+                var detalle = new Detallepedido
+                {
+                    IdPlato = d.IdPlato,
+                    Cantidad = d.Cantidad,
+                    Comentarios = d.Comentarios,
+                    PrecioUnitario = plato.Precio,
+                    Subtotal = plato.Precio * d.Cantidad
+                };
+
+                pedido.Detallepedidos.Add(detalle);
+                pedido.Total += detalle.Subtotal;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok("Pedido actualizado correctamente");
         }
 
-        pedido.IdEstadoPedido = estado.IdEstadoPedido;
-
-        // Si el pedido está listo, actualizar fecha de entrega real
-        if (estadoNombre == "Listo" || estadoNombre == "Entregado")
+        // ============================
+        //      ELIMINAR PEDIDO
+        // ============================
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> EliminarPedido(uint id)
         {
-            pedido.FechaHoraEntregaReal = DateTime.Now;
+            var pedido = await _context.Pedido.FindAsync(id);
+
+            if (pedido == null)
+                return NotFound("Pedido no encontrado");
+
+            _context.Pedido.Remove(pedido);
+            await _context.SaveChangesAsync();
+
+            return Ok("Pedido eliminado correctamente");
         }
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-
-    // DELETE: api/pedidos/{id}
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePedido(uint id)
-    {
-        var pedido = await _context.Pedido
-            .Include(p => p.Detallepedidos)
-            .FirstOrDefaultAsync(p => p.IdPedido == id);
-
-        if (pedido == null)
-        {
-            return NotFound();
-        }
-
-        // Eliminar detalles primero
-        _context.Detallepedidos.RemoveRange(pedido.Detallepedidos);
-        
-        // Eliminar pedido
-        _context.Pedido.Remove(pedido);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
     }
 }
