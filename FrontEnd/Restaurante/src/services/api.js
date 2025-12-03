@@ -88,6 +88,10 @@ export const mesasService = {
     const response = await api.get('/mesas');
     return response.data;
   },
+  getDisponibles: async () => {
+    const response = await api.get('/mesas/disponibles/lista');
+    return response.data;
+  },
   getById: async (id) => {
     const response = await api.get(`/mesas/${id}`);
     return response.data;
@@ -215,6 +219,10 @@ export const adminService = {
   // Platos
   getTodosPlatos: async (usuarioId) => {
     const response = await api.get('/admin/platos', { params: { usuarioId } });
+    return response.data;
+  },
+  crearPlato: async (usuarioId, plato) => {
+    const response = await api.post('/admin/platos', plato, { params: { usuarioId } });
     return response.data;
   },
   cambiarDisponibilidadPlato: async (platoId, usuarioId, disponible) => {

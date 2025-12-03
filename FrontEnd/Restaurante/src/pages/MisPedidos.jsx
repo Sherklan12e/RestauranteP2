@@ -93,7 +93,7 @@ function MisPedidos() {
                     <ul>
                       {pedido.detalles.map((detalle) => (
                         <li key={detalle.idDetallePedido}>
-                          <span className="item-nombre">{detalle.platoNombre}</span>
+                          <span className="item-nombre">{detalle.nombrePlato}</span>
                           <span className="item-cantidad">x{detalle.cantidad}</span>
                           <span className="item-precio">${detalle.subtotal.toFixed(2)}</span>
                         </li>

@@ -22,7 +22,11 @@ function MisReservas() {
     const cargarReservas = async () => {
       try {
         const reservasData = await reservasService.getByUsuario(usuarioObj.idUsuario);
-        setReservas(reservasData);
+        // Ordenar por fecha de reserva descendente (más recientes primero)
+        const reservasOrdenadas = reservasData.sort((a, b) => 
+          new Date(b.fechaHora) - new Date(a.fechaHora)
+        );
+        setReservas(reservasOrdenadas);
       } catch (error) {
         console.error('Error cargando reservas:', error);
       } finally {

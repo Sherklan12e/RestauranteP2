@@ -93,37 +93,50 @@ public class ReservasController : ControllerBase
 
         return Ok(reservas);
     }
-[HttpPost]
-public async Task<ActionResult<ReservaDTO>> PostReserva(ReservaCreateDTO dto)
-{
-    var reserva = new Reserva
+
+    [HttpPost]
+    public async Task<ActionResult<ReservaDTO>> PostReserva(ReservaCreateDTO dto)
     {
-        IdUsuario = dto.IdUsuario,
-        IdMesa = dto.IdMesa,
-        FechaHora = dto.FechaHora,
-        CantidadPersonas = dto.CantidadPersonas,
-        Comentarios = dto.Comentarios,
-        Estado = "Pendiente",
-        FechaCreacion = DateTime.Now
-    };
+        // Validar que la mesa existe
+        if (dto.IdMesa.HasValue)
+        {
+            var mesa = await _context.Mesas.FindAsync(dto.IdMesa.Value);
+            if (mesa == null)
+                return BadRequest("La mesa seleccionada no existe");
 
-    _context.Reservas.Add(reserva);
-    await _context.SaveChangesAsync();
+            // Validar que la cantidad de personas no exceda la capacidad de la mesa
+            if (dto.CantidadPersonas > mesa.Capacidad)
+                return BadRequest($"La mesa tiene capacidad para {mesa.Capacidad} personas, pero solicitaste {dto.CantidadPersonas}");
+        }
 
-    var reservaDTO = new ReservaDTO
-    {
-        IdReserva = reserva.IdReserva,
-        IdUsuario = reserva.IdUsuario,
-        IdMesa = reserva.IdMesa,
-        FechaHora = reserva.FechaHora,
-        CantidadPersonas = reserva.CantidadPersonas,
-        Estado = reserva.Estado,
-        Comentarios = reserva.Comentarios,
-        FechaCreacion = reserva.FechaCreacion
-    };
+        var reserva = new Reserva
+        {
+            IdUsuario = dto.IdUsuario,
+            IdMesa = dto.IdMesa,
+            FechaHora = dto.FechaHora,
+            CantidadPersonas = dto.CantidadPersonas,
+            Comentarios = dto.Comentarios,
+            Estado = "Pendiente",
+            FechaCreacion = DateTime.Now
+        };
 
-    return CreatedAtAction(nameof(GetReserva), new { id = reserva.IdReserva }, reservaDTO);
-}
+        _context.Reservas.Add(reserva);
+        await _context.SaveChangesAsync();
+
+        var reservaDTO = new ReservaDTO
+        {
+            IdReserva = reserva.IdReserva,
+            IdUsuario = reserva.IdUsuario,
+            IdMesa = reserva.IdMesa,
+            FechaHora = reserva.FechaHora,
+            CantidadPersonas = reserva.CantidadPersonas,
+            Estado = reserva.Estado,
+            Comentarios = reserva.Comentarios,
+            FechaCreacion = reserva.FechaCreacion
+        };
+
+        return CreatedAtAction(nameof(GetReserva), new { id = reserva.IdReserva }, reservaDTO);
+    }
 
     [HttpPut("{id}/estado")]
     public async Task<IActionResult> UpdateEstadoReserva(uint id, [FromBody] string estado)

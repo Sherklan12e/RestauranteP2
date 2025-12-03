@@ -25,6 +25,7 @@ namespace Api.Controllers
             var pedidos = await _context.Pedido
                 .Where(p => p.IdUsuario == idUsuario)
                 .Include(p => p.Detallepedidos)
+                .ThenInclude(d => d.IdPlatoNavigation)
                 .OrderByDescending(p => p.FechaHoraPedido)
                 .Select(p => new PedidoDTO
                 {
@@ -41,6 +42,7 @@ namespace Api.Controllers
                     {
                         IdDetallePedido = d.IdDetallePedido,
                         IdPlato = d.IdPlato,
+                        NombrePlato = d.IdPlatoNavigation != null ? d.IdPlatoNavigation.Nombre : "Plato eliminado",
                         Cantidad = d.Cantidad,
                         PrecioUnitario = d.PrecioUnitario,
                         Subtotal = d.Subtotal,

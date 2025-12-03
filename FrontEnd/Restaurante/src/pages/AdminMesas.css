@@ -122,6 +122,18 @@
   color: #c62828;
 }
 
+.reserva-confirmada {
+  margin: 10px 0 0 0;
+  padding: 8px;
+  background: #e3f2fd;
+  color: #1565c0;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  border-left: 3px solid #1565c0;
+}
+
 .toggle-btn {
   width: 100%;
   padding: 12px;

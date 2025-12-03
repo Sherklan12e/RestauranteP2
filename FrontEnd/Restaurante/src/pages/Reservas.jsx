@@ -30,9 +30,8 @@ function Reservas() {
 
     const cargarMesas = async () => {
       try {
-        const mesasData = await mesasService.getAll();
-        const mesasDisponibles = mesasData.filter(m => m.activa);
-        setMesas(mesasDisponibles);
+        const mesasData = await mesasService.getDisponibles();
+        setMesas(mesasData);
       } catch (error) {
         console.error('Error cargando mesas:', error);
         setMensaje({ tipo: 'error', texto: 'Error al cargar las mesas disponibles' });
@@ -46,11 +45,52 @@ function Reservas() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === 'cantidadPersonas' ? parseInt(value) || 1 :
-              name === 'idMesa' ? (value ? parseInt(value) : null) : value
-    }));
+    
+    if (name === 'idMesa') {
+      const mesaId = value ? parseInt(value) : null;
+      const mesaSeleccionada = mesaId ? mesas.find(m => m.idMesa === mesaId) : null;
+      
+      // Si selecciona una mesa y la cantidad de personas excede la capacidad, ajustar
+      if (mesaSeleccionada && formData.cantidadPersonas > mesaSeleccionada.capacidad) {
+        setFormData(prev => ({
+          ...prev,
+          idMesa: mesaId,
+          cantidadPersonas: mesaSeleccionada.capacidad
+        }));
+        setMensaje({ 
+          tipo: 'advertencia', 
+          texto: `La mesa ${mesaSeleccionada.numeroMesa} tiene capacidad para ${mesaSeleccionada.capacidad} personas. Se ajustó la cantidad.` 
+        });
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          idMesa: mesaId
+        }));
+      }
+    } else if (name === 'cantidadPersonas') {
+      const nuevaCantidad = parseInt(value) || 1;
+      const mesaSeleccionada = formData.idMesa ? mesas.find(m => m.idMesa === formData.idMesa) : null;
+      
+      // Si hay mesa seleccionada y la cantidad excede la capacidad, mostrar error
+      if (mesaSeleccionada && nuevaCantidad > mesaSeleccionada.capacidad) {
+        setMensaje({ 
+          tipo: 'error', 
+          texto: `La mesa ${mesaSeleccionada.numeroMesa} solo tiene capacidad para ${mesaSeleccionada.capacidad} personas` 
+        });
+        return;
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        cantidadPersonas: nuevaCantidad
+      }));
+      setMensaje({ tipo: '', texto: '' });
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -64,6 +104,18 @@ function Reservas() {
     if (!formData.fechaHora) {
       setMensaje({ tipo: 'error', texto: 'Por favor selecciona una fecha y hora' });
       return;
+    }
+
+    // Validación final: verificar que la cantidad de personas no exceda la capacidad de la mesa
+    if (formData.idMesa) {
+      const mesaSeleccionada = mesas.find(m => m.idMesa === formData.idMesa);
+      if (mesaSeleccionada && formData.cantidadPersonas > mesaSeleccionada.capacidad) {
+        setMensaje({ 
+          tipo: 'error', 
+          texto: `La mesa ${mesaSeleccionada.numeroMesa} solo tiene capacidad para ${mesaSeleccionada.capacidad} personas` 
+        });
+        return;
+      }
     }
 
     setEnviando(true);
@@ -194,7 +246,7 @@ function Reservas() {
         <div className="reserva-info">
           <h2>Información de Reserva</h2>
           <div className="info-card">
-            <p>📍 Dirección del Restaurante</p>
+            <p>📍 Dirección del Restaurante: Retiro PE</p>
             <p>📞 Teléfono: (123) 456-7890</p>
             <p>🕐 Horario: Lunes a Domingo 12:00 - 23:00</p>
           </div>

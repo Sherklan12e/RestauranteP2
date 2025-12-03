@@ -95,19 +95,19 @@ function AdminDashboard() {
         <h2>Opciones de Administración</h2>
         <div className="menu-buttons">
           <button className="menu-btn" onClick={() => navigate('/admin/pedidos')}>
-            📦 Gestionar Pedidos
+            Gestionar Pedidos
           </button>
           <button className="menu-btn" onClick={() => navigate('/admin/reservas')}>
-            📅 Gestionar Reservas
+            Gestionar Reservas
           </button>
           <button className="menu-btn" onClick={() => navigate('/admin/usuarios')}>
-            👥 Gestionar Usuarios
+            Gestionar Usuarios
           </button>
           <button className="menu-btn" onClick={() => navigate('/admin/platos')}>
-            🍽️ Gestionar Platos
+            Gestionar Platos
           </button>
           <button className="menu-btn" onClick={() => navigate('/admin/mesas')}>
-            🪑 Gestionar Mesas
+            Gestionar Mesas
           </button>
         </div>
       </div>

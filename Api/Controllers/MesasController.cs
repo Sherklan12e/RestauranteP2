@@ -15,6 +15,26 @@ public class MesasController : ControllerBase
         _context = context;
     }
 
+    // GET: api/mesas/disponibles/lista - Mesas disponibles para reservar
+    [HttpGet("disponibles/lista")]
+    public async Task<ActionResult<IEnumerable<MesaDTO>>> GetMesasDisponibles()
+    {
+        var mesas = await _context.Mesas
+            .Include(m => m.Reservas)
+            .Where(m => m.Activa == true && !m.Reservas.Any(r => r.Estado == "Confirmada"))
+            .Select(m => new MesaDTO
+            {
+                IdMesa = m.IdMesa,
+                NumeroMesa = m.NumeroMesa,
+                Capacidad = m.Capacidad,
+                Activa = true
+            })
+            .OrderBy(m => m.NumeroMesa)
+            .ToListAsync();
+
+        return Ok(mesas);
+    }
+
     // GET: api/mesas
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MesaDTO>>> GetMesas()

@@ -75,14 +75,17 @@ function AdminMesas() {
               <h3>Mesa {mesa.numeroMesa}</h3>
               <p className="capacidad">Capacidad: {mesa.capacidad} personas</p>
               <p className={`estado ${mesa.activa ? 'disponible' : 'ocupada'}`}>
-                {mesa.activa ? '✓ Disponible' : '✗ Ocupada'}
+                {mesa.activa ? 'Disponible' : 'Ocupada'}
               </p>
+              {mesa.tieneReservaConfirmada && (
+                <p className="reserva-confirmada">Reserva confirmada</p>
+              )}
             </div>
             <button
               className={`toggle-btn ${mesa.activa ? 'desactivar' : 'activar'}`}
               onClick={() => toggleEstadoMesa(mesa.idMesa, mesa.activa)}
             >
-              {mesa.activa ? '🚫 Ocupar' : '✓ Liberar'}
+              {mesa.activa ? 'Ocupar' : 'Liberar'}
             </button>
           </div>
         ))}

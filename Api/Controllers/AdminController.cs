@@ -34,6 +34,7 @@ public class AdminController : ControllerBase
             .Include(p => p.IdUsuarioNavigation)
             .Include(p => p.IdEstadoPedidoNavigation)
             .Include(p => p.Detallepedidos)
+            .ThenInclude(d => d.IdPlatoNavigation)
             .Select(p => new AdminPedidoDTO
             {
                 IdPedido = p.IdPedido,
@@ -44,7 +45,16 @@ public class AdminController : ControllerBase
                 Total = p.Total,
                 Estado = p.IdEstadoPedidoNavigation.Nombre,
                 Comentarios = p.Comentarios,
-                CantidadPlatos = p.Detallepedidos.Count
+                CantidadPlatos = p.Detallepedidos.Count,
+                Detalles = p.Detallepedidos.Select(d => new AdminPedidoDetalleDTO
+                {
+                    IdDetallePedido = d.IdDetallePedido,
+                    IdPlato = d.IdPlato,
+                    NombrePlato = d.IdPlatoNavigation.Nombre,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    Subtotal = d.Subtotal
+                }).ToList()
             })
             .OrderByDescending(p => p.FechaHoraPedido)
             .ToListAsync();
@@ -112,30 +122,60 @@ public class AdminController : ControllerBase
         if (reserva == null)
             return NotFound();
 
+        // Si se confirma la reserva, marcar la mesa como ocupada
+        if (dto.NuevoEstado == "Confirmada" && reserva.IdMesa.HasValue)
+        {
+            var mesa = await _context.Mesas.FindAsync(reserva.IdMesa.Value);
+            if (mesa != null)
+            {
+                mesa.Activa = false; // Marcar como ocupada (no disponible)
+            }
+        }
+
+        // Si se cancela o completa la reserva, marcar la mesa como disponible nuevamente
+        if ((dto.NuevoEstado == "Cancelada" || dto.NuevoEstado == "Completada") && reserva.IdMesa.HasValue)
+        {
+            var mesa = await _context.Mesas.FindAsync(reserva.IdMesa.Value);
+            if (mesa != null)
+            {
+                mesa.Activa = true; // Marcar como disponible
+            }
+        }
+
         reserva.Estado = dto.NuevoEstado;
         await _context.SaveChangesAsync();
 
         return NoContent();
     }
 
-    // GET: api/admin/usuarios - Listar todos los usuarios
+    // GET: api/admin/usuarios - Listar todos los usuarios con pedidos y reservas
     [HttpGet("usuarios")]
-    public async Task<ActionResult<IEnumerable<AdminUsuarioDTO>>> GetTodosUsuarios([FromQuery] uint usuarioId)
+    public async Task<ActionResult<IEnumerable<object>>> GetTodosUsuarios([FromQuery] uint usuarioId)
     {
         if (!IsAdmin(usuarioId))
             return Forbid();
 
         var usuarios = await _context.Usuarios
-            .Select(u => new AdminUsuarioDTO
+            .Include(u => u.Pedidos)
+            .Include(u => u.Reservas)
+            .Select(u => new
             {
-                IdUsuario = u.IdUsuario,
-                Nombre = u.Nombre,
-                Apellido = u.Apellido,
-                Email = u.Email,
-                Telefono = u.Telefono,
-                Rol = u.Rol,
-                Activo = u.Activo,
-                FechaRegistro = u.FechaRegistro
+                u.IdUsuario,
+                u.Nombre,
+                u.Apellido,
+                u.Email,
+                u.Telefono,
+                u.Rol,
+                u.Activo,
+                u.FechaRegistro,
+                TotalPedidos = u.Pedidos.Count,
+                TotalReservas = u.Reservas.Count,
+                UltimoPedido = u.Pedidos.OrderByDescending(p => p.FechaHoraPedido).FirstOrDefault() != null 
+                    ? u.Pedidos.OrderByDescending(p => p.FechaHoraPedido).FirstOrDefault().FechaHoraPedido 
+                    : (DateTime?)null,
+                UltimaReserva = u.Reservas.OrderByDescending(r => r.FechaHora).FirstOrDefault() != null 
+                    ? u.Reservas.OrderByDescending(r => r.FechaHora).FirstOrDefault().FechaHora 
+                    : (DateTime?)null
             })
             .OrderByDescending(u => u.FechaRegistro)
             .ToListAsync();
@@ -214,12 +254,17 @@ public class AdminController : ControllerBase
             return Forbid();
 
         var mesas = await _context.Mesas
+            .Include(m => m.Reservas)
             .Select(m => new
             {
                 m.IdMesa,
                 m.NumeroMesa,
                 m.Capacidad,
-                m.Activa
+                // Una mesa está activa (disponible) si:
+                // 1. Su estado Activa es true Y
+                // 2. No tiene reservas confirmadas
+                Activa = m.Activa == true && !m.Reservas.Any(r => r.Estado == "Confirmada"),
+                TieneReservaConfirmada = m.Reservas.Any(r => r.Estado == "Confirmada")
             })
             .OrderBy(m => m.NumeroMesa)
             .ToListAsync();
@@ -267,6 +312,43 @@ public class AdminController : ControllerBase
             .ToListAsync();
 
         return Ok(platos);
+    }
+
+    // POST: api/admin/platos - Crear nuevo plato
+    [HttpPost("platos")]
+    public async Task<ActionResult<object>> CrearPlato([FromQuery] uint usuarioId, [FromBody] PlatoCreateDTO dto)
+    {
+        if (!IsAdmin(usuarioId))
+            return Forbid();
+
+        var plato = new Plato
+        {
+            IdCategoria = dto.IdCategoria,
+            Nombre = dto.Nombre,
+            Descripcion = dto.Descripcion,
+            Precio = dto.Precio,
+            TiempoPreparacion = dto.TiempoPreparacion,
+            ImagenUrl = dto.ImagenUrl,
+            Disponible = dto.Disponible,
+            EsMenuDelDia = dto.EsMenuDelDia,
+            Activo = true
+        };
+
+        _context.Platos.Add(plato);
+        await _context.SaveChangesAsync();
+
+        var categoria = await _context.Categoriaplatos.FindAsync(dto.IdCategoria);
+
+        return CreatedAtAction(nameof(GetTodosPlatos), new { usuarioId }, new
+        {
+            plato.IdPlato,
+            plato.Nombre,
+            plato.Descripcion,
+            plato.Precio,
+            plato.Disponible,
+            plato.Activo,
+            Categoria = categoria?.Nombre
+        });
     }
 
     // PUT: api/admin/platos/{id}/disponibilidad - Cambiar disponibilidad de plato

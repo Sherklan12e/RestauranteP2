@@ -1,5 +1,5 @@
 .admin-dashboard {
-  padding: 20px;
+  padding: 15px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -7,7 +7,7 @@
 .admin-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 30px;
+  padding: 25px;
   border-radius: 10px;
   margin-bottom: 30px;
   text-align: center;
@@ -15,12 +15,12 @@
 
 .admin-header h1 {
   margin: 0 0 10px 0;
-  font-size: 2.5em;
+  font-size: 28px;
 }
 
 .admin-header p {
   margin: 0;
-  font-size: 1.1em;
+  font-size: 16px;
   opacity: 0.9;
 }
 
@@ -135,4 +135,132 @@
 
 .menu-btn:active {
   transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 10px;
+  }
+
+  .admin-header {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .admin-header h1 {
+    font-size: 22px;
+  }
+
+  .admin-header p {
+    font-size: 14px;
+  }
+
+  .estadisticas-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .estadistica-card {
+    padding: 15px;
+  }
+
+  .estadistica-card h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  .estadistica-card .numero {
+    font-size: 24px;
+    margin: 8px 0;
+  }
+
+  .estadistica-card button {
+    padding: 8px 16px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .admin-menu {
+    padding: 20px;
+  }
+
+  .admin-menu h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .menu-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  .menu-btn {
+    padding: 15px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard {
+    padding: 8px;
+  }
+
+  .admin-header {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .admin-header h1 {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .admin-header p {
+    font-size: 12px;
+  }
+
+  .estadisticas-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .estadistica-card {
+    padding: 12px;
+  }
+
+  .estadistica-card h3 {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .estadistica-card .numero {
+    font-size: 20px;
+    margin: 6px 0;
+  }
+
+  .estadistica-card button {
+    padding: 6px 12px;
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  .admin-menu {
+    padding: 15px;
+  }
+
+  .admin-menu h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .menu-buttons {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .menu-btn {
+    padding: 12px;
+    font-size: 12px;
+  }
 }

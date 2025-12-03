@@ -102,7 +102,21 @@ function AdminPedidos() {
                   <td>{pedido.emailUsuario}</td>
                   <td>{new Date(pedido.fechaHoraPedido).toLocaleDateString()}</td>
                   <td>${pedido.total.toFixed(2)}</td>
-                  <td>{pedido.cantidadPlatos}</td>
+                  <td>
+                    <div className="platos-list">
+                      {pedido.detalles && pedido.detalles.length > 0 ? (
+                        <ul>
+                          {pedido.detalles.map((detalle) => (
+                            <li key={detalle.idDetallePedido}>
+                              {detalle.nombrePlato} x{detalle.cantidad}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span>-</span>
+                      )}
+                    </div>
+                  </td>
                   <td>
                     <span className={`estado-badge estado-${pedido.estado.toLowerCase()}`}>
                       {pedido.estado}
