@@ -16,6 +16,43 @@ namespace Api.Controllers
         }
 
         // ============================
+        //   OBTENER PEDIDOS POR USUARIO
+        //   GET: api/pedidos/usuario/{idUsuario}
+        // ============================
+        [HttpGet("usuario/{idUsuario}")]
+        public async Task<ActionResult<IEnumerable<PedidoDTO>>> ObtenerPedidosPorUsuario(uint idUsuario)
+        {
+            var pedidos = await _context.Pedido
+                .Where(p => p.IdUsuario == idUsuario)
+                .Include(p => p.Detallepedidos)
+                .OrderByDescending(p => p.FechaHoraPedido)
+                .Select(p => new PedidoDTO
+                {
+                    IdPedido = p.IdPedido,
+                    IdUsuario = p.IdUsuario,
+                    IdReserva = p.IdReserva,
+                    IdEstadoPedido = p.IdEstadoPedido,
+                    IdMetodoPago = p.IdMetodoPago,
+                    FechaHoraPedido = p.FechaHoraPedido,
+                    EsPreOrden = p.EsPreOrden,
+                    Total = p.Total,
+                    Comentarios = p.Comentarios,
+                    Detalles = p.Detallepedidos.Select(d => new PedidoDetalleDTO
+                    {
+                        IdDetallePedido = d.IdDetallePedido,
+                        IdPlato = d.IdPlato,
+                        Cantidad = d.Cantidad,
+                        PrecioUnitario = d.PrecioUnitario,
+                        Subtotal = d.Subtotal,
+                        Comentarios = d.Comentarios
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(pedidos);
+        }
+
+        // ============================
         //      CREAR PEDIDO
         // ============================
         [HttpPost]

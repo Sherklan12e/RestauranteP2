@@ -99,7 +99,7 @@ function MisReservas() {
                 <div>
                   <h3>Reserva #{reserva.idReserva}</h3>
                   <p className="fecha-reserva">
-                    📅 {formatearFecha(reserva.fechaHora)}
+                     {formatearFecha(reserva.fechaHora)}
                   </p>
                 </div>
                 <span className={`estado-badge ${getEstadoColor(reserva.estado)}`}>
@@ -122,12 +122,12 @@ function MisReservas() {
                 )}
                 {reserva.comentarios && (
                   <div className="detail-item full-width">
-                    <span className="detail-label">💬 Comentarios:</span>
+                    <span className="detail-label">Comentarios:</span>
                     <span className="detail-value">{reserva.comentarios}</span>
                   </div>
                 )}
                 <div className="detail-item full-width">
-                  <span className="detail-label">📝 Fecha de creación:</span>
+                  <span className="detail-label"> Fecha de creación:</span>
                   <span className="detail-value">
                     {formatearFecha(reserva.fechaCreacion)}
                   </span>

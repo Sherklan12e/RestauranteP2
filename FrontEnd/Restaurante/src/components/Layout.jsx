@@ -1,24 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { useCarrito } from '../context/CarritoContext';
+import { useUsuario } from '../context/UsuarioContext';
 import './Layout.css';
 
 function Layout({ children }) {
-  const [usuario, setUsuario] = useState(null);
   const navigate = useNavigate();
   const { obtenerCantidadTotal } = useCarrito();
+  const { usuario, logout } = useUsuario();
   const cantidadCarrito = obtenerCantidadTotal();
 
-  useEffect(() => {
-    const usuarioGuardado = localStorage.getItem('usuario');
-    if (usuarioGuardado) {
-      setUsuario(JSON.parse(usuarioGuardado));
-    }
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem('usuario');
-    setUsuario(null);
+    logout();
     navigate('/');
   };
 
@@ -53,7 +45,7 @@ function Layout({ children }) {
             ) : (
               <>
                 <Link to="/login">Iniciar Sesión</Link>
-                <Link to="/register" className="btn-register">
+                <Link to="/register">
                   Registrarse
                 </Link>
               </>

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usuariosService } from '../services/api';
+import { useUsuario } from '../context/UsuarioContext';
 import './Auth.css';
 
 function Register() {
   const navigate = useNavigate();
+  const { login } = useUsuario();
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -15,6 +17,43 @@ function Register() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const soloLetrasKeyDown = (e) => {
+    // Permitir teclas de control (backspace, tab, flechas, etc.)
+    if (
+      e.key === 'Backspace' ||
+      e.key === 'Tab' ||
+      e.key === 'ArrowLeft' ||
+      e.key === 'ArrowRight' ||
+      e.key === 'Delete'
+    ) {
+      return;
+    }
+
+    // Solo permitir letras (incluyendo acentos) y espacios
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]$/;
+    if (!regex.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const soloNumerosKeyDown = (e) => {
+    // Permitir teclas de control (backspace, tab, flechas, etc.)
+    if (
+      e.key === 'Backspace' ||
+      e.key === 'Tab' ||
+      e.key === 'ArrowLeft' ||
+      e.key === 'ArrowRight' ||
+      e.key === 'Delete'
+    ) {
+      return;
+    }
+
+    // Solo permitir dígitos
+    if (!/^[0-9]$/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -71,7 +110,7 @@ function Register() {
         email: usuarioCreado.email,
       };
 
-      localStorage.setItem('usuario', JSON.stringify(usuarioLogin));
+      login(usuarioLogin);
       
       // Redirigir
       navigate('/');
@@ -108,6 +147,9 @@ function Register() {
                 onChange={handleChange}
                 required
                 placeholder="Juan"
+                onKeyDown={soloLetrasKeyDown}
+                pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$"
+                title="Solo se permiten letras y espacios"
               />
             </div>
 
@@ -121,6 +163,9 @@ function Register() {
                 onChange={handleChange}
                 required
                 placeholder="Pérez"
+                onKeyDown={soloLetrasKeyDown}
+                pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$"
+                title="Solo se permiten letras y espacios"
               />
             </div>
           </div>
@@ -141,12 +186,16 @@ function Register() {
           <div className="form-group">
             <label htmlFor="telefono">Teléfono (Opcional)</label>
             <input
-              type="tel"
+              type="text"
               id="telefono"
               name="telefono"
               value={formData.telefono}
               onChange={handleChange}
-              placeholder="+1234567890"
+              placeholder="Solo números"
+              onKeyDown={soloNumerosKeyDown}
+              inputMode="numeric"
+              pattern="^[0-9]+$"
+              title="Solo se permiten números"
             />
           </div>
 

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usuariosService } from '../services/api';
+import { useUsuario } from '../context/UsuarioContext';
 import './Auth.css';
 
 function Login() {
   const navigate = useNavigate();
+  const { login } = useUsuario();
   const [formData, setFormData] = useState({
     email: '',
     contrasena: '',
@@ -46,10 +48,8 @@ function Login() {
         email: usuario.email,
         rol: usuario.rol,
       };
-      
-      console.log(usuarioLogin)  
-      localStorage.setItem('usuario', JSON.stringify(usuarioLogin));
-      console.log(usuarioLogin)
+
+      login(usuarioLogin);
       // Redirigir según el rol
       if (usuario.rol === 'admin') {
         navigate('/admin');
